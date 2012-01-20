@@ -1,0 +1,5 @@
+app-editors/vim python
+app-editors/vim ruby
+app-editors/vim perl
+app-editors/vim vim-pager
+app-editors/vim bash-completion

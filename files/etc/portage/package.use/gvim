@@ -1,0 +1,4 @@
+app-editors/gvim bash-completion
+app-editors/gvim ruby
+app-editors/gvim python
+app-editors/gvim perl
