@@ -6,6 +6,11 @@ portage-dirs:
 	mkdir -p ${EPREFIX}/etc/portage/package.mask
 	mkdir -p ${EPREFIX}/etc/portage/package.unmask
 
+eix:
+	emerge -uN app-portage/eix
+	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
+	eix-sync
+
 # -- Editors
 vim: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/vim
