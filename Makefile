@@ -25,6 +25,7 @@ gvim: portage-dirs
 # -- python
 ipdb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
+	pip uninstall -y ipdb || exit 0
 	emerge -uN -j dev-python/ipdb
 
 scikits.learn: portage-dirs
@@ -32,3 +33,7 @@ scikits.learn: portage-dirs
 	pip uninstall -y scikits.learn || exit 0
 	emerge -uN -j sci-libs/scikits_learn
 
+pytables: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pytables
+	pip uninstall -y pytables || exit 0
+	emerge -uN -j dev-python/pytables
