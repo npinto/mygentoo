@@ -37,3 +37,9 @@ pytables: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pytables
 	pip uninstall -y pytables || exit 0
 	emerge -uN -j dev-python/pytables
+
+# -- C/C++
+tbb: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
+	emerge -uN -j dev-cpp/tbb
+
