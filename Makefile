@@ -26,3 +26,9 @@ gvim: portage-dirs
 ipdb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
 	emerge -uN dev-python/ipdb
+
+scikits.learn: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
+	pip uninstall -y scikits.learn || exit 0
+	emerge -uN sci-libs/scikits_learn
+

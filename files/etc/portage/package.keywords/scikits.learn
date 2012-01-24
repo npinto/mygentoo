@@ -1,0 +1,2 @@
+>=sci-libs/libsvm-3.11 ~amd64
+>=sci-libs/scikits_learn-0.9 ~amd64
