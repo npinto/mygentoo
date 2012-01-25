@@ -28,7 +28,12 @@ gvim: portage-dirs
 	emerge -uN -j app-editors/gvim
 
 # -- python
-ipdb: portage-dirs
+ipython: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipython
+	emerge -uN -j dev-python/ipython
+
+ipdb: portage-dirs ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
 	emerge -uN -j dev-python/ipdb
 
