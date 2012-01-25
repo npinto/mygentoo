@@ -40,7 +40,7 @@ pytables: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pytables
 	emerge -uN -j dev-python/pytables
 
-pymongo: portage-dirs
+pymongo: portage-dirs mongodb
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
 	emerge -uN -j dev-python/pymongo
 
