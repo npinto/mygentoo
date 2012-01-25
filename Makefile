@@ -11,7 +11,7 @@ portage-dirs:
 eix:
 	emerge -uN -j app-portage/eix
 	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
-	eix-sync
+	eix-sync -q
 
 # -- System
 parallel: portage-dirs
