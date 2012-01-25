@@ -1,0 +1,7 @@
+dev-python/PyQt4 X dbus
+x11-libs/qt-qt3support pch
+x11-libs/qt-gui pch dbus
+x11-libs/qt-core pch
+x11-libs/qt-webkit pch
+x11-libs/qt-sql pch
+x11-libs/qt-opengl pch

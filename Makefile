@@ -27,8 +27,8 @@ gvim: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/gvim
 	emerge -uN -j app-editors/gvim
 
-# -- python
-ipython: portage-dirs
+# -- Python
+ipython: portage-dirs pyqt4
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipython
 	emerge -uN -j dev-python/ipython
@@ -49,6 +49,10 @@ pymongo: portage-dirs mongodb
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
 	emerge -uN -j dev-python/pymongo
 
+pyqt4: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
+	emerge -uN -j dev-python/PyQt4
+
 # -- C/C++
 tbb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
@@ -59,3 +63,8 @@ mongodb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/mongodb
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
 	emerge -uN -j dev-db/mongodb
+
+# -- Image
+imagemagick: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/imagemagick
+	emerge -uN -j media-gfx/imagemagick
