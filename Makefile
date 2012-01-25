@@ -1,10 +1,6 @@
 
 default: portage-dirs
 
-# -- Various fixes
-# (e.g. from eselect news)
-include fixes
-
 # -- Portage
 portage-dirs:
 	mkdir -p ${EPREFIX}/etc/portage/package.use
