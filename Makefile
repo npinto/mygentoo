@@ -57,6 +57,11 @@ pyqt4: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
 	emerge -uN -j dev-python/PyQt4
 
+pip: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
+	emerge -uN -j dev-python/pip
+
 virtualenv: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
