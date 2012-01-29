@@ -92,3 +92,16 @@ shogun: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/shogun
 	-layman -a sekyfsr
 	emerge -uN -j sci-libs/shogun
+
+# -- CUDA
+nvidia-drivers:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
+	emerge -uN -j x11-drivers/nvidia-drivers
+
+cuda:
+	-layman -a sekyfsr
+	eix-sync -q
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/cuda
+	emerge -uN -j dev-util/nvidia-cuda-toolkit
+	emerge -uN -j dev-util/nvidia-cuda-sdk

@@ -1,0 +1,4 @@
+dev-util/nvidia-cuda-toolkit ~amd64
+dev-util/nvidia-cuda-sdk ~amd64
+app-benchmarks/cuda_memtest ~amd64
+dev-util/cuda-init-script ~amd64
