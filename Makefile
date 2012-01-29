@@ -85,5 +85,6 @@ imagemagick: portage-dirs
 # -- Misc
 shogun: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/shogun
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/shogun
 	-layman -a sekyfsr
 	emerge -uN -j sci-libs/shogun
