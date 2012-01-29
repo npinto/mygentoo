@@ -18,6 +18,10 @@ parallel: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/parallel
 	emerge -uN -j sys-process/parallel
 
+wgetpaste:
+	cp -vf {files,${EPREFIX}}/etc/wgetpaste.conf
+	emerge -uN -j app-text/wgetpaste
+
 # -- Editors
 vim: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/vim
