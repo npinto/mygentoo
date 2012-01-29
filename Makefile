@@ -68,3 +68,9 @@ mongodb: portage-dirs
 imagemagick: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/imagemagick
 	emerge -uN -j media-gfx/imagemagick
+
+# -- Misc
+shogun: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/shogun
+	-layman -a sekyfsr
+	emerge -uN -j sci-libs/shogun
