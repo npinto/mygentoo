@@ -41,6 +41,10 @@ scikits.learn: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
 	emerge -uN -j sci-libs/scikits_learn
 
+scikits.image: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.image
+	emerge -uN -j sci-libs/scikits_image
+
 pytables: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pytables
 	emerge -uN -j dev-python/pytables
@@ -52,6 +56,15 @@ pymongo: portage-dirs mongodb
 pyqt4: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
 	emerge -uN -j dev-python/PyQt4
+
+pip: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
+	emerge -uN -j dev-python/pip
+
+virtualenv: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
+	emerge -uN -j dev-python/virtualenv
 
 # -- C/C++
 tbb: portage-dirs
