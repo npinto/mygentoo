@@ -3,10 +3,10 @@ default: portage-dirs
 
 # -- Portage
 portage-dirs:
-	mkdir -p ${EPREFIX}/etc/portage/package.use
-	mkdir -p ${EPREFIX}/etc/portage/package.keywords
-	mkdir -p ${EPREFIX}/etc/portage/package.mask
-	mkdir -p ${EPREFIX}/etc/portage/package.unmask
+	@mkdir -p ${EPREFIX}/etc/portage/package.use
+	@mkdir -p ${EPREFIX}/etc/portage/package.keywords
+	@mkdir -p ${EPREFIX}/etc/portage/package.mask
+	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
 
 eix:
 	emerge -uN -j app-portage/eix
