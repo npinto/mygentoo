@@ -70,6 +70,10 @@ virtualenv: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
 
+pycuda: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
+	emerge -uN -j dev-python/pycuda
+
 # -- C/C++
 tbb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
