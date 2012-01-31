@@ -1,5 +1,10 @@
 
-default: portage-dirs
+default: help
+
+help:
+	@echo Available targets:
+	@echo ------------------
+	@./make-list-targets.sh -f Makefile | cut -d':' -f1
 
 # -- Portage
 portage-dirs:
@@ -32,6 +37,15 @@ gvim: portage-dirs
 	emerge -uN -j app-editors/gvim
 
 # -- Python
+pip: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
+	emerge -uN -j dev-python/pip
+
+virtualenv: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
+	emerge -uN -j dev-python/virtualenv
+
 ipython: portage-dirs pyqt4
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipython
@@ -40,6 +54,10 @@ ipython: portage-dirs pyqt4
 ipdb: portage-dirs ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
 	emerge -uN -j dev-python/ipdb
+
+pep8: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pep8
+	emerge -uN -j dev-python/pep8
 
 scikits.learn: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
@@ -60,15 +78,6 @@ pymongo: portage-dirs mongodb
 pyqt4: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
 	emerge -uN -j dev-python/PyQt4
-
-pip: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
-	emerge -uN -j dev-python/pip
-
-virtualenv: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
-	emerge -uN -j dev-python/virtualenv
 
 pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
