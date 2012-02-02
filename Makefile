@@ -106,6 +106,14 @@ shogun: portage-dirs
 	-layman -a sekyfsr
 	emerge -uN -j sci-libs/shogun
 
+dropbox: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/dropbox
+	emerge -uN -j net-misc/dropbox
+	sysctl -w fs.inotify.max_user_watches=100000
+	grep max_user_watches /etc/sysctl.conf || \
+		echo "fs.inotify.max_user_watches = 100000" >>  /etc/sysctl.conf
+	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 100000/g' /etc/sysctl.conf
+
 # -- CUDA
 nvidia-drivers:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
