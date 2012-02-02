@@ -116,5 +116,4 @@ cuda:
 	eix-sync -q
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/cuda
-	emerge -uN -j dev-util/nvidia-cuda-toolkit
-	emerge -uN -j dev-util/nvidia-cuda-sdk
+	emerge -uN -j dev-util/nvidia-cuda-{toolkit,sdk,tdk}
