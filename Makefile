@@ -13,6 +13,13 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.mask
 	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
 
+layman:
+	emerge -uN -j app-portage/layman
+	grep -e '^source.*layman.*' /etc/make.conf \
+		|| echo "source /var/lib/layman/make.conf" >> /etc/make.conf
+	@echo "$(layman -L | wc -l) overlays found"
+	layman -S
+
 eix:
 	emerge -uN -j app-portage/eix
 	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
@@ -105,7 +112,7 @@ imagemagick: portage-dirs
 	emerge -uN -j media-gfx/imagemagick
 
 # -- Misc
-shogun: portage-dirs
+shogun: portage-dirs layman
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/shogun
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/shogun
 	-layman -a sekyfsr
@@ -120,11 +127,11 @@ dropbox: portage-dirs
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
 
 # -- CUDA
-nvidia-drivers:
+nvidia-drivers: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
 
-cuda:
+cuda: portage-dirs layman
 	-layman -a sekyfsr
 	eix-sync -q
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda
