@@ -19,6 +19,11 @@ eix:
 	eix-sync -q
 
 # -- System
+module-rebuild:
+	emerge -uN -j sys-kernel/module-rebuild
+	module-rebuild populate
+
+# -- Shell tools
 parallel: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/parallel
 	emerge -uN -j sys-process/parallel
