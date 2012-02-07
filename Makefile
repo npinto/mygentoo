@@ -140,3 +140,4 @@ cuda: portage-dirs layman
 	emerge -uN -j app-admin/eselect-opencl
 	eselect opengl set nvidia
 	eselect opencl set nvidia
+	make module-rebuild
