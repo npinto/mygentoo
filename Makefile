@@ -26,6 +26,13 @@ eix:
 	eix-sync -q
 
 # -- System
+gcc:
+	emerge -uN '=sys-devel/gcc-4.5.3-r1'
+	gcc-config -l
+	gcc-config x86_64-pc-linux-gnu-4.5.3
+	gcc-config -l
+	emerge --oneshot libtool
+
 module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
 	module-rebuild populate
