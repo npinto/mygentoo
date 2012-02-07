@@ -100,6 +100,7 @@ pyqt4: portage-dirs
 
 pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pycuda
 	emerge -uN -j dev-python/pycuda
 
 # -- C/C++
@@ -138,7 +139,7 @@ nvidia-drivers: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
 
-cuda: portage-dirs layman
+cuda: portage-dirs layman nvidia-drivers
 	-layman -a sekyfsr
 	eix-sync -q
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda

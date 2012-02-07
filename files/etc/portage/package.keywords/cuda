@@ -3,3 +3,4 @@ dev-util/nvidia-cuda-sdk ~amd64
 dev-util/nvidia-cuda-tdk ~amd64
 app-benchmarks/cuda_memtest ~amd64
 dev-util/cuda-init-script ~amd64
+app-admin/eselect-opencl ~amd64
