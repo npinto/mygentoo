@@ -137,3 +137,6 @@ cuda: portage-dirs layman
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/cuda
 	emerge -uN -j dev-util/nvidia-cuda-{toolkit,sdk,tdk}
+	emerge -uN -j app-admin/eselect-opencl
+	eselect opengl set nvidia
+	eselect opencl set nvidia
