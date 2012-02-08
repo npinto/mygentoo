@@ -142,17 +142,16 @@ dropbox: portage-dirs
 nvidia-drivers: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
+	emerge -uN -j app-admin/eselect-opencl
+	eselect opencl set nvidia
+	eselect opengl set nvidia
 
 cuda: portage-dirs layman nvidia-drivers
 	-layman -a sekyfsr
 	eix-sync -q
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/cuda
-	emerge -uN -j '=dev-util/nvidia-cuda-sdk-4.1'
 	emerge -uN -j '=dev-util/nvidia-cuda-toolkit-4.1'
-	#emerge -uN -j dev-util/nvidia-cuda-{toolkit,sdk,tdk}
+	emerge -uN -j '=dev-util/nvidia-cuda-sdk-4.1'
 	emerge -uN -j dev-util/nvidia-cuda-tdk
-	emerge -uN -j app-admin/eselect-opencl
-	eselect opengl set nvidia
-	eselect opencl set nvidia
 	make module-rebuild
