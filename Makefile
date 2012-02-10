@@ -82,6 +82,21 @@ autopep8: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
 	emerge -uN -j dev-python/autopep8
 
+numpy: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numpy
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numpy
+	emerge -uN -j --onlydeps dev-python/numpy
+	FEATURES=test emerge -uN dev-python/numpy
+
+scipy: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scipy
+	emerge -uN -j --onlydeps sci-libs/scipy
+	FEATURES=test emerge -uN sci-libs/scipy
+
+joblib: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/joblib
+	emerge -uN -j dev-python/joblib
+
 scikits.learn: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
 	emerge -uN -j sci-libs/scikits_learn
