@@ -119,6 +119,11 @@ mongodb: portage-dirs
 	emerge -uN -j dev-db/mongodb
 
 # -- Image
+freeimage: portage-dirs
+	-layman -a gamerlay
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
+	emerge -uN -j media-libs/freeimage
+
 imagemagick: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/imagemagick
 	emerge -uN -j media-gfx/imagemagick
