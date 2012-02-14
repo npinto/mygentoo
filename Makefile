@@ -139,7 +139,7 @@ dropbox: portage-dirs
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
 
 # -- CUDA
-nvidia-drivers: portage-dirs
+nvidia-drivers: portage-dirs gcc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
 	emerge -uN -j app-admin/eselect-opencl
