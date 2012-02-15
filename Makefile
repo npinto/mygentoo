@@ -57,15 +57,26 @@ gvim: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/gvim
 	emerge -uN -j app-editors/gvim
 
+# -- Desktop
+xdg:
+	command -v xdg-mime &> /dev/null || emerge -uN -j x11-misc/xdg-utils
+
+xdg-config: xdg evince nautilus
+	mkdir -p ${HOME}/.local/share/applications/
+	xdg-mime default evince.desktop application/pdf
+	xdg-mime default nautilus-browser.desktop application/pdf
+
+evince:
+	command -v evince &> /dev/null || emerge -uN -j app-text/evince
+
+nautilus:
+	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
+
 # -- Python
 pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
 	emerge -uN -j dev-python/pip
-
-virtualenv: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
-	emerge -uN -j dev-python/virtualenv
 
 ipython: portage-dirs pyqt4
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
@@ -118,6 +129,10 @@ pymongo: portage-dirs mongodb
 pyqt4: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
 	emerge -uN -j dev-python/PyQt4
+
+virtualenv: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
+	emerge -uN -j dev-python/virtualenv
 
 pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
