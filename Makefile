@@ -87,6 +87,10 @@ ipdb: portage-dirs ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
 	emerge -uN -j dev-python/ipdb
 
+cython: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cython
+	emerge -uN -j dev-python/cython
+
 pep8: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pep8
 	emerge -uN -j dev-python/pep8
