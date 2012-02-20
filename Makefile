@@ -106,6 +106,12 @@ scipy: portage-dirs
 	emerge -uN -j --onlydeps sci-libs/scipy
 	FEATURES=test emerge -uN sci-libs/scipy
 
+numexpr: portage-dirs mkl
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numexpr
+	emerge -uN -j --onlydeps dev-python/numexpr
+	FEATURES=test emerge -uN dev-python/numexpr
+
 joblib: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/joblib
 	emerge -uN -j dev-python/joblib
@@ -134,6 +140,11 @@ virtualenv: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
 
+virtualenvwrapper: portage-dirs virtualenv
+	-layman -a sekyfsr
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
+	emerge -uN -j dev-python/virtualenvwrapper
+
 pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pycuda
@@ -143,6 +154,10 @@ pycuda: portage-dirs
 tbb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
 	emerge -uN -j dev-cpp/tbb
+
+mkl: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mkl
+	emerge -uN -j sci-libs/mkl
 
 # -- Database
 mongodb: portage-dirs
