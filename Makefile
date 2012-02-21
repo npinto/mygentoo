@@ -65,6 +65,12 @@ virtualenv: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
 
+virtualenvwrapper: portage-dirs virtualenv
+	-layman -a sekyfsr
+	eix-sync -q
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
+	emerge -uN -j dev-python/virtualenvwrapper
+
 ipython: portage-dirs pyqt4
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipython
