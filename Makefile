@@ -14,6 +14,11 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
 	@mkdir -p ${EPREFIX}/etc/portage/package.license
 
+eix:
+	emerge -uN -j app-portage/eix
+	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
+	eix-sync -q
+
 layman:
 	emerge -uN -j app-portage/layman
 	grep -e '^source.*layman.*' /etc/make.conf \
@@ -21,10 +26,14 @@ layman:
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
 
-eix:
-	emerge -uN -j app-portage/eix
-	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
-	eix-sync -q
+overlay:
+	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
+	layman -s ${OVERLAY}
+	egencache --repo='sekyfsr' --update
+	#eix-update
+
+overlay-sekyfsr: OVERLAY=sekyfsr
+overlay-sekyfsr: overlay
 
 # -- System
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
@@ -157,12 +166,11 @@ pycuda: portage-dirs
 	emerge -uN -j dev-python/pycuda
 
 # -- C/C++
-icc: portage-dirs
-	-layman -a sekyfsr
-	layman -S
+icc: portage-dirs overlay-sekyfsr
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
+	#emerge -uN '=dev-lang/icc-12.1*'
 	emerge -uN dev-lang/icc
 
 tbb: portage-dirs
