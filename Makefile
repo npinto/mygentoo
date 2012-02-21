@@ -160,8 +160,9 @@ icc: portage-dirs
 	-layman -a sekyfsr
 	layman -S
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
-	emerge -uN -j dev-lang/icc
+	emerge -uN dev-lang/icc
 
 tbb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
