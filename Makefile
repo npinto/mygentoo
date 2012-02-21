@@ -12,6 +12,7 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.keywords
 	@mkdir -p ${EPREFIX}/etc/portage/package.mask
 	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
+	@mkdir -p ${EPREFIX}/etc/portage/package.license
 
 layman:
 	emerge -uN -j app-portage/layman
@@ -155,6 +156,13 @@ pycuda: portage-dirs
 	emerge -uN -j dev-python/pycuda
 
 # -- C/C++
+icc: portage-dirs
+	-layman -a sekyfsr
+	layman -S
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
+	emerge -uN -j dev-lang/icc
+
 tbb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
 	emerge -uN -j dev-cpp/tbb
