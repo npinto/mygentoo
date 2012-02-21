@@ -12,6 +12,7 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.keywords
 	@mkdir -p ${EPREFIX}/etc/portage/package.mask
 	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
+	@mkdir -p ${EPREFIX}/etc/portage/package.license
 
 layman:
 	emerge -uN -j app-portage/layman
@@ -26,9 +27,11 @@ eix:
 	eix-sync -q
 
 # -- System
+gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
-	emerge -uN '=sys-devel/gcc-4.5.3-r1'
+	echo $(GCC_VERSION)
 	gcc-config -l
+	emerge -uN '=sys-devel/gcc-4.5.3-r1'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
 	emerge --oneshot libtool
@@ -55,6 +58,21 @@ gvim: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/gvim
 	emerge -uN -j app-editors/gvim
 
+# -- Desktop
+xdg:
+	command -v xdg-mime &> /dev/null || emerge -uN -j x11-misc/xdg-utils
+
+xdg-config: xdg evince nautilus
+	mkdir -p ${HOME}/.local/share/applications/
+	xdg-mime default evince.desktop application/pdf
+	xdg-mime default nautilus-browser.desktop application/pdf
+
+evince:
+	command -v evince &> /dev/null || emerge -uN -j app-text/evince
+
+nautilus:
+	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
+
 # -- Python
 pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
@@ -67,7 +85,7 @@ virtualenv: portage-dirs
 
 virtualenvwrapper: portage-dirs virtualenv
 	-layman -a sekyfsr
-	eix-sync -q
+	layman -S
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
 	emerge -uN -j dev-python/virtualenvwrapper
 
@@ -79,6 +97,10 @@ ipython: portage-dirs pyqt4
 ipdb: portage-dirs ipython
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
 	emerge -uN -j dev-python/ipdb
+
+cython: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cython
+	emerge -uN -j dev-python/cython
 
 pep8: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pep8
@@ -98,6 +120,12 @@ scipy: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scipy
 	emerge -uN -j --onlydeps sci-libs/scipy
 	FEATURES=test emerge -uN sci-libs/scipy
+
+numexpr: portage-dirs mkl
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numexpr
+	emerge -uN -j --onlydeps dev-python/numexpr
+	FEATURES=test emerge -uN dev-python/numexpr
 
 joblib: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/joblib
@@ -129,9 +157,21 @@ pycuda: portage-dirs
 	emerge -uN -j dev-python/pycuda
 
 # -- C/C++
+icc: portage-dirs
+	-layman -a sekyfsr
+	layman -S
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/icc
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
+	emerge -uN dev-lang/icc
+
 tbb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
 	emerge -uN -j dev-cpp/tbb
+
+mkl: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mkl
+	emerge -uN -j sci-libs/mkl
 
 # -- Database
 mongodb: portage-dirs
@@ -140,6 +180,11 @@ mongodb: portage-dirs
 	emerge -uN -j dev-db/mongodb
 
 # -- Image
+freeimage: portage-dirs
+	-layman -a gamerlay
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
+	emerge -uN -j media-libs/freeimage
+
 imagemagick: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/imagemagick
 	emerge -uN -j media-gfx/imagemagick
@@ -160,7 +205,7 @@ dropbox: portage-dirs
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
 
 # -- CUDA
-nvidia-drivers: portage-dirs
+nvidia-drivers: portage-dirs gcc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
 	emerge -uN -j app-admin/eselect-opencl

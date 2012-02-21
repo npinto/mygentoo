@@ -1,2 +1,2 @@
-dev-python/pycuda ~amd64
-=dev-python/pytools-11 ~amd64
+=dev-python/pycuda-2011.2.2 **
+=dev-python/pytools-11 **

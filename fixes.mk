@@ -1,4 +1,4 @@
-all: libpng14-news pambase-freeze
+all: libpng14-news pambase-freeze v8-revdep-rebuild
 
 libpng14-news:
 	revdep-rebuild --library libpng14.so.14 -- --keep-going
@@ -10,3 +10,7 @@ pambase-freeze:
 	emerge '=app-portage/portage-utils-0.3.1'
 	emerge sys-auth/pambase
 	emerge app-portage/portage-utils
+
+v8-revdep-rebuild:
+	revdep-rebuild --library '/usr/lib64/libv8-3.6.6.11.so'
+	rm -vf '/usr/lib64/libv8-3.6.6.11.so'
