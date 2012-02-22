@@ -1,8 +1,8 @@
 default: help
 
 help:
-	@echo Available targets:
-	@echo ------------------
+	@#@echo Available targets:
+	@#@echo ------------------
 	@./make-list-targets.sh -f Makefile | cut -d':' -f1
 
 # -- Portage
