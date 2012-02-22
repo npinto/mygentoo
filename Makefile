@@ -1,4 +1,3 @@
-
 default: help
 
 help:
@@ -26,14 +25,14 @@ layman:
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
 
-overlay:
+_overlay:
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -s ${OVERLAY}
 	egencache --repo='sekyfsr' --update
 	#eix-update
 
 overlay-sekyfsr: OVERLAY=sekyfsr
-overlay-sekyfsr: overlay
+overlay-sekyfsr: _overlay
 
 # -- System
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
