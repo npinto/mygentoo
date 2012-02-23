@@ -164,12 +164,15 @@ pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pycuda
 	emerge -uN -j dev-python/pycuda
 
+simplejson: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
+	emerge -uN -j dev-python/simplejson
+
 # -- C/C++
 icc: portage-dirs overlay-sekyfsr
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
-	#emerge -uN '=dev-lang/icc-12.1*'
 	emerge -uN dev-lang/icc
 
 tbb: portage-dirs
