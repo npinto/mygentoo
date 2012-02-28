@@ -48,6 +48,11 @@ module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
 	module-rebuild populate
 
+# -- Network
+bind:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/bind
+	emerge -uN -j net-dns/bind
+
 # -- Shell tools
 parallel: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/parallel
@@ -167,6 +172,10 @@ pycuda: portage-dirs
 simplejson: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
 	emerge -uN -j dev-python/simplejson
+
+fabric: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/fabric
+	emerge -uN -j dev-python/fabric
 
 # -- C/C++
 icc: portage-dirs overlay-sekyfsr
