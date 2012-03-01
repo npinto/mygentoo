@@ -92,6 +92,10 @@ pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
 	emerge -uN -j dev-python/pip
 
+setuptools: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
+	emerge -uN -j dev-python/setuptools
+
 virtualenv: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
