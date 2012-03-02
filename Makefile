@@ -1,9 +1,8 @@
-
 default: help
 
 help:
-	@echo Available targets:
-	@echo ------------------
+	@#@echo Available targets:
+	@#@echo ------------------
 	@./make-list-targets.sh -f Makefile | cut -d':' -f1
 
 # -- Portage
@@ -14,6 +13,11 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
 	@mkdir -p ${EPREFIX}/etc/portage/package.license
 
+eix:
+	emerge -uN -j app-portage/eix
+	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
+	eix-sync -q
+
 layman:
 	emerge -uN -j app-portage/layman
 	grep -e '^source.*layman.*' /etc/make.conf \
@@ -21,10 +25,14 @@ layman:
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
 
-eix:
-	emerge -uN -j app-portage/eix
-	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
-	eix-sync -q
+_overlay:
+	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
+	layman -s ${OVERLAY}
+	egencache --repo='sekyfsr' --update
+	#eix-update
+
+overlay-sekyfsr: OVERLAY=sekyfsr
+overlay-sekyfsr: _overlay
 
 # -- System
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
@@ -39,6 +47,11 @@ gcc:
 module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
 	module-rebuild populate
+
+# -- Network
+bind:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/bind
+	emerge -uN -j net-dns/bind
 
 # -- Shell tools
 parallel: portage-dirs
@@ -78,6 +91,20 @@ pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
 	emerge -uN -j dev-python/pip
+
+setuptools: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
+	emerge -uN -j dev-python/setuptools
+
+virtualenv: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
+	emerge -uN -j dev-python/virtualenv
+
+virtualenvwrapper: portage-dirs virtualenv
+	-layman -a sekyfsr
+	layman -S
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
+	emerge -uN -j dev-python/virtualenvwrapper
 
 ipython: portage-dirs pyqt4
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
@@ -141,24 +168,21 @@ pyqt4: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
 	emerge -uN -j dev-python/PyQt4
 
-virtualenv: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
-	emerge -uN -j dev-python/virtualenv
-
-virtualenvwrapper: portage-dirs virtualenv
-	-layman -a sekyfsr
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
-	emerge -uN -j dev-python/virtualenvwrapper
-
 pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pycuda
 	emerge -uN -j dev-python/pycuda
 
+simplejson: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
+	emerge -uN -j dev-python/simplejson
+
+fabric: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/fabric
+	emerge -uN -j dev-python/fabric
+
 # -- C/C++
-icc: portage-dirs
-	-layman -a sekyfsr
-	layman -S
+icc: portage-dirs overlay-sekyfsr
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/icc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
