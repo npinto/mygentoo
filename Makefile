@@ -194,6 +194,7 @@ tbb: portage-dirs
 
 mkl: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mkl
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/mkl
 	emerge -uN -j sci-libs/mkl
 
 # -- Database
