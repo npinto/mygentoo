@@ -255,6 +255,7 @@ ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 	wget http://download.oracle.com/otn-pub/java/jdk/6u31-b04/jdk-6u31-linux-x64.bin
 	mv -vf jdk-6u31-linux-x64.bin $@
 
-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
+sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -j dev-java/sun-jdk 
 
