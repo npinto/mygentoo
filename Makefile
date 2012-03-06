@@ -1,9 +1,15 @@
 default: help
 
 help:
+	make list
+
+list:
 	@#@echo Available targets:
 	@#@echo ------------------
-	@./make-list-targets.sh -f Makefile | cut -d':' -f1
+	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
+
+all:
+	make $(shell make list | grep -v all)
 
 # -- Portage
 portage-dirs:
