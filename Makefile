@@ -86,6 +86,10 @@ evince:
 nautilus:
 	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
 
+terminator: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/terminator
+	emerge -uN -j x11-terms/terminator
+
 # -- Python
 pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
@@ -245,3 +249,12 @@ cuda: portage-dirs layman nvidia-drivers
 	emerge -uN -j '=dev-util/nvidia-cuda-sdk-4.1'
 	emerge -uN -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
+
+# -- Jave
+${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
+	wget http://download.oracle.com/otn-pub/java/jdk/6u31-b04/jdk-6u31-linux-x64.bin
+	mv -vf jdk-6u31-linux-x64.bin $@
+
+jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
+	emerge -uN -j dev-java/sun-jdk 
+
