@@ -213,7 +213,7 @@ mongodb: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
 	emerge -uN -j dev-db/mongodb
 
-# -- Image
+# -- Image / Video
 freeimage: portage-dirs
 	-layman -a gamerlay
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
@@ -222,6 +222,10 @@ freeimage: portage-dirs
 imagemagick: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/imagemagick
 	emerge -uN -j media-gfx/imagemagick
+
+mplayer: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j media-video/mplayer2
 
 # -- Misc
 shogun: portage-dirs layman
@@ -256,7 +260,7 @@ cuda: portage-dirs layman nvidia-drivers
 	emerge -uN -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
 
-# -- Jave
+# -- Java
 ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 	wget http://download.oracle.com/otn-pub/java/jdk/6u31-b04/jdk-6u31-linux-x64.bin
 	mv -vf jdk-6u31-linux-x64.bin $@
