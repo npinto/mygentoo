@@ -45,7 +45,7 @@ gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	echo $(GCC_VERSION)
 	gcc-config -l
-	emerge -uN '=sys-devel/gcc-4.5.3-r1'
+	emerge -uN '=sys-devel/gcc-4.5.3-r2'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
 	emerge --oneshot libtool
