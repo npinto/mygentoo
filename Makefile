@@ -184,8 +184,8 @@ pyqt4: portage-dirs
 	emerge -uN -j dev-python/PyQt4
 
 pycuda: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pycuda
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/pycuda
 
 simplejson: portage-dirs
