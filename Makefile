@@ -43,6 +43,7 @@ overlay-sekyfsr: _overlay
 # -- System
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	echo $(GCC_VERSION)
 	gcc-config -l
 	emerge -uN '=sys-devel/gcc-4.5.3-r2'
@@ -61,7 +62,7 @@ bind:
 
 # -- Shell tools
 parallel: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/parallel
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j sys-process/parallel
 
 wgetpaste:
@@ -99,6 +100,10 @@ terminator: portage-dirs
 	emerge -uN -j x11-terms/terminator
 
 # -- Python
+python: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j dev-lang/python
+
 pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
@@ -181,8 +186,8 @@ pyqt4: portage-dirs
 	emerge -uN -j dev-python/PyQt4
 
 pycuda: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pycuda
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pycuda
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/pycuda
 
 simplejson: portage-dirs
