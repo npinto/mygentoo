@@ -43,6 +43,7 @@ overlay-sekyfsr: _overlay
 # -- System
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	echo $(GCC_VERSION)
 	gcc-config -l
 	emerge -uN '=sys-devel/gcc-4.5.3-r2'
@@ -61,7 +62,7 @@ bind:
 
 # -- Shell tools
 parallel: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/parallel
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j sys-process/parallel
 
 wgetpaste:
