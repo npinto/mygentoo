@@ -97,6 +97,10 @@ terminator: portage-dirs
 	emerge -uN -j x11-terms/terminator
 
 # -- Python
+python: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j dev-lang/python
+
 pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
