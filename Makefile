@@ -190,6 +190,11 @@ pycuda: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/pycuda
 
+pyopencl: portage-dirs opencl
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j dev-python/pyopencl
+
 simplejson: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
 	emerge -uN -j dev-python/simplejson
@@ -248,6 +253,13 @@ dropbox: portage-dirs
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
+
+# -- OpenCL
+opencl: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -j virtual/opencl
 
 # -- CUDA
 nvidia-drivers: portage-dirs gcc
