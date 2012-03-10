@@ -88,13 +88,15 @@ xdg-config: xdg evince nautilus
 	xdg-mime default nautilus-browser.desktop application/pdf
 
 evince:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v evince &> /dev/null || emerge -uN -j app-text/evince
 
 nautilus:
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
 
 terminator: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/terminator
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/terminator
 
 # -- Python
