@@ -237,6 +237,7 @@ imagemagick: portage-dirs
 	emerge -uN -j media-gfx/imagemagick
 
 mplayer2: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j media-video/mplayer2
 
