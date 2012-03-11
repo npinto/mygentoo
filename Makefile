@@ -49,7 +49,7 @@ gcc:
 	emerge -uN '=sys-devel/gcc-4.5.3-r2'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
-	emerge --oneshot libtool
+	emerge --oneshot -q libtool
 
 module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
@@ -237,7 +237,6 @@ imagemagick: portage-dirs
 	emerge -uN -j media-gfx/imagemagick
 
 mplayer2: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j media-video/mplayer2
 
