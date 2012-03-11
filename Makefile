@@ -151,7 +151,8 @@ numpy: portage-dirs
 	FEATURES=test emerge -uN dev-python/numpy
 
 scipy: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scipy
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j --onlydeps sci-libs/scipy
 	FEATURES=test emerge -uN sci-libs/scipy
 
@@ -162,7 +163,7 @@ numexpr: portage-dirs mkl
 	FEATURES=test emerge -uN dev-python/numexpr
 
 joblib: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/joblib
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/joblib
 
 scikits.learn: portage-dirs
