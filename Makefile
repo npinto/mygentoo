@@ -147,14 +147,12 @@ autopep8: portage-dirs
 numpy: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numpy
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numpy
-	emerge -uN -j --onlydeps dev-python/numpy
-	FEATURES=test emerge -uN dev-python/numpy
+	emerge -uN -j dev-python/numpy
 
 scipy: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -j --onlydeps sci-libs/scipy
-	FEATURES=test emerge -uN sci-libs/scipy
+	emerge -uN -j sci-libs/scipy
 
 numexpr: portage-dirs mkl
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
