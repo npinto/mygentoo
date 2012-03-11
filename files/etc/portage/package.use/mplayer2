@@ -1,1 +1,2 @@
 =media-video/ffmpeg-0.7.8 -threads
+sys-libs/zlib minizip

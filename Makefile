@@ -99,6 +99,10 @@ terminator: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/terminator
 
+adobe-flash: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -j www-plugins/adobe-flash
+
 # -- Python
 python: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
@@ -181,7 +185,8 @@ pymongo: portage-dirs mongodb
 	emerge -uN -j dev-python/pymongo
 
 pyqt4: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/PyQt4
 
 pycuda: portage-dirs
@@ -247,12 +252,16 @@ shogun: portage-dirs layman
 	emerge -uN -j sci-libs/shogun
 
 dropbox: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/dropbox
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j net-misc/dropbox
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
+
+texlive: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j app-text/texlive-core
 
 # -- OpenCL
 opencl: portage-dirs
