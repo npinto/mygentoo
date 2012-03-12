@@ -46,7 +46,8 @@ gcc:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	echo $(GCC_VERSION)
 	gcc-config -l
-	emerge -uN '=sys-devel/gcc-4.5.3-r2'
+	emerge -uN -q '=sys-devel/gcc-4.5.3-r2'
+	emerge -uN -q '=sys-devel/gcc-4.6.2'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
 	emerge --oneshot -q libtool
