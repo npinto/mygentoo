@@ -44,6 +44,7 @@ overlay-sekyfsr: _overlay
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.unmask/$@
 	echo $(GCC_VERSION)
 	gcc-config -l
 	emerge -uN -q '=sys-devel/gcc-4.5.3-r2'
