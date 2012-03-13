@@ -44,9 +44,11 @@ overlay-sekyfsr: _overlay
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.unmask/$@
 	echo $(GCC_VERSION)
 	gcc-config -l
-	emerge -uN '=sys-devel/gcc-4.5.3-r2'
+	emerge -uN -q '=sys-devel/gcc-4.5.3-r2'
+	emerge -uN -q '=sys-devel/gcc-4.6.2'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
 	emerge --oneshot -q libtool
@@ -200,12 +202,16 @@ pyopencl: portage-dirs opencl
 	emerge -uN -j dev-python/pyopencl
 
 simplejson: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/simplejson
 
 fabric: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/fabric
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/fabric
+
+cgkit: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j dev-python/cgkit
 
 # -- C/C++
 icc: portage-dirs overlay-sekyfsr
@@ -240,7 +246,6 @@ imagemagick: portage-dirs
 	emerge -uN -j media-gfx/imagemagick
 
 mplayer2: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j media-video/mplayer2
 
