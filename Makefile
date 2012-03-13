@@ -202,12 +202,16 @@ pyopencl: portage-dirs opencl
 	emerge -uN -j dev-python/pyopencl
 
 simplejson: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/simplejson
 
 fabric: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/fabric
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/fabric
+
+cgkit: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j dev-python/cgkit
 
 # -- C/C++
 icc: portage-dirs overlay-sekyfsr
