@@ -268,6 +268,10 @@ texlive: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j app-text/texlive-core
 
+cairo: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j x11-libs/cairo
+
 # -- OpenCL
 opencl: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
