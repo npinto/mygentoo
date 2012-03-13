@@ -44,9 +44,11 @@ overlay-sekyfsr: _overlay
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.unmask/$@
 	echo $(GCC_VERSION)
 	gcc-config -l
-	emerge -uN '=sys-devel/gcc-4.5.3-r2'
+	emerge -uN -q '=sys-devel/gcc-4.5.3-r2'
+	emerge -uN -q '=sys-devel/gcc-4.6.2'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
 	emerge --oneshot -q libtool
@@ -99,6 +101,10 @@ terminator: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/terminator
 
+adobe-flash: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -j www-plugins/adobe-flash
+
 # -- Python
 python: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
@@ -147,14 +153,12 @@ autopep8: portage-dirs
 numpy: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numpy
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numpy
-	emerge -uN -j --onlydeps dev-python/numpy
-	FEATURES=test emerge -uN dev-python/numpy
+	emerge -uN -j dev-python/numpy
 
 scipy: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -j --onlydeps sci-libs/scipy
-	FEATURES=test emerge -uN sci-libs/scipy
+	emerge -uN -j sci-libs/scipy
 
 numexpr: portage-dirs mkl
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
@@ -183,7 +187,8 @@ pymongo: portage-dirs mongodb
 	emerge -uN -j dev-python/pymongo
 
 pyqt4: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pyqt4
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/PyQt4
 
 pycuda: portage-dirs
@@ -197,12 +202,16 @@ pyopencl: portage-dirs opencl
 	emerge -uN -j dev-python/pyopencl
 
 simplejson: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/simplejson
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/simplejson
 
 fabric: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/fabric
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/fabric
+
+cgkit: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j dev-python/cgkit
 
 # -- C/C++
 icc: portage-dirs overlay-sekyfsr
@@ -248,12 +257,16 @@ shogun: portage-dirs layman
 	emerge -uN -j sci-libs/shogun
 
 dropbox: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/dropbox
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j net-misc/dropbox
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
+
+texlive: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j app-text/texlive-core
 
 # -- OpenCL
 opencl: portage-dirs
