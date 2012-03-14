@@ -237,7 +237,6 @@ mongodb: portage-dirs
 
 # -- Image / Video
 freeimage: portage-dirs
-	-layman -a gamerlay
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
 	emerge -uN -j media-libs/freeimage
 
@@ -271,6 +270,10 @@ texlive: portage-dirs
 cairo: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j x11-libs/cairo
+
+ntfs3g: portage-dirs
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j sys-fs/ntfs3g
 
 # -- OpenCL
 opencl: portage-dirs
