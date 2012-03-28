@@ -272,6 +272,7 @@ cairo: portage-dirs
 	emerge -uN -j x11-libs/cairo
 
 ntfs3g: portage-dirs
+	CLEAN_DELAY=0 emerge -q -C sys-fs/ntfsprogs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j sys-fs/ntfs3g
 
