@@ -276,6 +276,11 @@ ntfs3g: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j sys-fs/ntfs3g
 
+valgrind: portage-dirs
+	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf || echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
+	test ! -f /usr/lib/debug/usr/lib64/misc/glibc && emerge -q sys-libs/glibc
+	emerge -uN -j dev-util/valgrind
+
 # -- OpenCL
 opencl: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
@@ -308,5 +313,5 @@ ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 
 sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
 	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
-	emerge -uN -j dev-java/sun-jdk 
+	emerge -uN -j dev-java/sun-jdk
 
