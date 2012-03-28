@@ -30,4 +30,4 @@
 #
 # ... or add a touch of color by highlighting the targets in the rules:
 #
-make -rpn | sed -n -e '/^$/ { n ; /^[^ ]*:/p }' | egrep --color '^[^ ]*:' | grep -v '^_.*$' | sort -u
+make -rpn | sed -n -e '/^$/ { n ; /^[^ ]*:/p }' | egrep -v '^_.*$' | egrep --color '^[^ ]*:' | sort -u
