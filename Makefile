@@ -18,6 +18,8 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.mask
 	@mkdir -p ${EPREFIX}/etc/portage/package.unmask
 	@mkdir -p ${EPREFIX}/etc/portage/package.license
+	@mkdir -p ${EPREFIX}/etc/portage/package.env
+	@mkdir -p ${EPREFIX}/etc/portage/env
 
 eix:
 	emerge -uN -j app-portage/eix
@@ -35,7 +37,6 @@ _overlay:
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -s ${OVERLAY}
 	egencache --repo='sekyfsr' --update
-	#eix-update
 
 overlay-sekyfsr: OVERLAY=sekyfsr
 overlay-sekyfsr: _overlay
@@ -45,13 +46,19 @@ gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/package.unmask/$@
-	echo $(GCC_VERSION)
+	cp -vf {files,${EPREFIX}}/etc/portage/package.env/$@
+	cp -vf {files,${EPREFIX}}/etc/portage/env/simple-cflags
+	# -- gcc-4.5 (default)
+	#echo $(GCC_VERSION)
 	gcc-config -l
 	emerge -uN -q '=sys-devel/gcc-4.5.3-r2'
-	emerge -uN -q '=sys-devel/gcc-4.6.2'
 	gcc-config x86_64-pc-linux-gnu-4.5.3
 	gcc-config -l
 	emerge --oneshot -q libtool
+	# -- gcc-4.6
+	emerge -uN -q '=sys-devel/gcc-4.6.2'
+	# -- gcc-4.1
+	emerge -uN -q '=sys-devel/gcc-4.1.2'
 
 module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
