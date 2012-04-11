@@ -1,0 +1,15 @@
+[Desktop Entry] 
+Encoding=UTF-8
+Name=awesome
+Comment=Highly configurable framework window manager
+TryExec=awesome
+Exec=awesome
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=MyAwesome
+Comment=AwesomeWM
+TryExec=$HOME/.config/awesome/start_session.sh
+Exec=$HOME/.config/awesome/start_session.sh
+Icon=
+Type=Application

@@ -92,7 +92,13 @@ gvim: portage-dirs
 # -- Desktop
 gdm: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
 	emerge -uN -j gnome-base/gdm
+
+awesome: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
+	emerge -uN -j x11-wm/awesome
 
 xdg:
 	command -v xdg-mime &> /dev/null || emerge -uN -j x11-misc/xdg-utils
@@ -102,6 +108,10 @@ xdg-config: xdg evince nautilus
 	xdg-mime default evince.desktop application/pdf
 	xdg-mime default nautilus-browser.desktop application/pdf
 
+gthumb: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j media-gfx/gthumb
+
 evince: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v evince &> /dev/null || emerge -uN -j app-text/evince
@@ -109,6 +119,10 @@ evince: portage-dirs
 nautilus: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
+
+gnome-terminal: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j x11-terms/gnome-terminal
 
 terminator: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
@@ -307,14 +321,18 @@ opencl: portage-dirs
 
 # -- CUDA
 nvidia-drivers: portage-dirs gcc
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/nvidia-drivers
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-drivers/nvidia-drivers
+	eselect opengl set nvidia
 	emerge -uN -j app-admin/eselect-opencl
 	eselect opencl set nvidia
-	eselect opengl set nvidia
 
-cuda: portage-dirs layman nvidia-drivers
+nvidia-settings: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j media-video/nvidia-settings
+
+cuda: portage-dirs layman nvidia-drivers nvidia-settings
 	-layman -a sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
