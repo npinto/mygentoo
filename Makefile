@@ -23,7 +23,7 @@ portage-dirs:
 
 eix: layman
 	emerge -uN -j app-portage/eix
-	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
+	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	eix-sync -q
 
 layman:
@@ -45,10 +45,10 @@ overlay-sekyfsr: _overlay
 # -- System
 gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.unmask/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.env/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/env/simple-cflags
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.env/$@
+	cp -f {files,${EPREFIX}}/etc/portage/env/simple-cflags
 	# -- gcc-4.5 (default)
 	gcc-config -l | grep "x86_64-pc-linux-gnu-4.5.3 \*" &> /dev/null \
 		|| \
@@ -68,29 +68,30 @@ module-rebuild:
 
 # -- Network
 bind:
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/bind
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/bind
 	emerge -uN -j net-dns/bind
 
 # -- Shell tools
 parallel: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j sys-process/parallel
 
 wgetpaste:
-	cp -vf {files,${EPREFIX}}/etc/wgetpaste.conf
+	cp -f {files,${EPREFIX}}/etc/wgetpaste.conf
 	emerge -uN -j app-text/wgetpaste
 
 # -- Editors
 vim: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/vim
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/vim
 	emerge -uN -j app-editors/vim
 
 gvim: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/gvim
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/gvim
 	emerge -uN -j app-editors/gvim
 
 # -- Desktop
 gdm: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j gnome-base/gdm
 
 xdg:
@@ -102,24 +103,24 @@ xdg-config: xdg evince nautilus
 	xdg-mime default nautilus-browser.desktop application/pdf
 
 evince: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v evince &> /dev/null || emerge -uN -j app-text/evince
 
 nautilus: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
 
 terminator: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/terminator
 
 adobe-flash: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -j www-plugins/adobe-flash
 
 # -- Python
 python: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-lang/python
 	eselect python set python2.7
 	python-updater -- -j --with-bdeps y --keep-going
@@ -127,152 +128,152 @@ python: portage-dirs
 	revdep-rebuild -v -- --ask -j
 
 pip: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pip
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pip
 	emerge -uN -j dev-python/pip
 
 setuptools: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
 	emerge -uN -j dev-python/setuptools
 
 virtualenv: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
 
 virtualenvwrapper: portage-dirs virtualenv
 	-layman -a sekyfsr
 	layman -S
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
 	emerge -uN -j dev-python/virtualenvwrapper
 
 ipython: portage-dirs pyqt4
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/ipython
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipython
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/ipython
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/ipython
 	emerge -uN -j dev-python/ipython
 
 ipdb: portage-dirs ipython
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
 	emerge -uN -j dev-python/ipdb
 
 cython: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cython
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cython
 	emerge -uN -j dev-python/cython
 
 pep8: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pep8
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pep8
 	emerge -uN -j dev-python/pep8
 
 autopep8: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
 	emerge -uN -j dev-python/autopep8
 
 numpy: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numpy
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/numpy
 	emerge -uN -j dev-python/numpy
 
 scipy: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j sci-libs/scipy
 
 numexpr: portage-dirs mkl
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/numexpr
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/numexpr
 	emerge -uN -j --onlydeps dev-python/numexpr
 	FEATURES=test emerge -uN dev-python/numexpr
 
 joblib: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/joblib
 
 scikits.learn: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
 	emerge -uN -j sci-libs/scikits_learn
 
 scikits.image: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/scikits.image
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/scikits.image
 	emerge -uN -j sci-libs/scikits_image
 
 pytables: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pytables
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
 	emerge -uN -j dev-python/pytables
 
 pymongo: portage-dirs mongodb
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
 	emerge -uN -j dev-python/pymongo
 
 pyqt4: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/PyQt4
 
 pycuda: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/pycuda
 
 pyopencl: portage-dirs opencl
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/pyopencl
 
 simplejson: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/simplejson
 
 fabric: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/fabric
 
 cgkit: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/cgkit
 
 # -- C/C++
 icc: portage-dirs overlay-sekyfsr
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/icc
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/icc
-	cp -vf {files,${EPREFIX}}/etc/portage/package.license/icc
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/icc
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/icc
 	emerge -uN dev-lang/icc
 
 tbb: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/tbb
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/tbb
 	emerge -uN -j dev-cpp/tbb
 
 mkl: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mkl
-	cp -vf {files,${EPREFIX}}/etc/portage/package.license/mkl
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mkl
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/mkl
 	emerge -uN -j sci-libs/mkl
 
 # -- Database
 mongodb: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/mongodb
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/mongodb
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
 	emerge -uN -j dev-db/mongodb
 
 # -- Image / Video
 freeimage: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
 	emerge -uN -j media-libs/freeimage
 
 imagemagick: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/imagemagick
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/imagemagick
 	emerge -uN -j media-gfx/imagemagick
 
 mplayer2: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j media-video/mplayer2
 
 # -- Misc
 shogun: portage-dirs layman
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/shogun
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/shogun
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
 	-layman -a sekyfsr
 	emerge -uN -j sci-libs/shogun
 
 dropbox: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j net-misc/dropbox
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
@@ -280,16 +281,16 @@ dropbox: portage-dirs
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
 
 texlive: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j app-text/texlive-core
 
 cairo: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j x11-libs/cairo
 
 ntfs3g: portage-dirs
 	CLEAN_DELAY=0 emerge -q -C sys-fs/ntfsprogs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j sys-fs/ntfs3g
 
 valgrind: portage-dirs
@@ -299,15 +300,15 @@ valgrind: portage-dirs
 
 # -- OpenCL
 opencl: portage-dirs
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -j virtual/opencl
 
 # -- CUDA
 nvidia-drivers: portage-dirs gcc
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/nvidia-drivers
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
 	emerge -uN -j app-admin/eselect-opencl
 	eselect opencl set nvidia
@@ -316,8 +317,8 @@ nvidia-drivers: portage-dirs gcc
 cuda: portage-dirs layman nvidia-drivers
 	-layman -a sekyfsr
 	eix-sync -q
-	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/cuda
-	cp -vf {files,${EPREFIX}}/etc/portage/package.use/cuda
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
 	emerge -uN -j '=dev-util/nvidia-cuda-toolkit-4.1'
 	emerge -uN -j '=dev-util/nvidia-cuda-sdk-4.1'
 	emerge -uN -j dev-util/nvidia-cuda-tdk
@@ -329,6 +330,6 @@ ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 	mv -vf jdk-6u31-linux-x64.bin $@
 
 sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
-	cp -vf {files,${EPREFIX}}/etc/portage/package.license/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -j dev-java/sun-jdk
 
