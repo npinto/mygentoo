@@ -21,13 +21,14 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.env
 	@mkdir -p ${EPREFIX}/etc/portage/env
 
-eix:
-	emerge -uN -j app-portage/eix app-portage/layman
+eix: layman
+	emerge -uN -j app-portage/eix
 	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
 	eix-sync -q
 
 layman:
 	emerge -uN -j app-portage/layman
+	touch /var/lib/layman/make.conf
 	grep -e '^source.*layman.*' /etc/make.conf \
 		|| echo "source /var/lib/layman/make.conf" >> /etc/make.conf
 	@echo "$(layman -L | wc -l) overlays found"
