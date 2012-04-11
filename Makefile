@@ -50,12 +50,13 @@ gcc:
 	cp -vf {files,${EPREFIX}}/etc/portage/package.env/$@
 	cp -vf {files,${EPREFIX}}/etc/portage/env/simple-cflags
 	# -- gcc-4.5 (default)
-	#echo $(GCC_VERSION)
-	gcc-config -l
-	emerge -uN -q '=sys-devel/gcc-4.5.3-r2'
-	gcc-config x86_64-pc-linux-gnu-4.5.3
-	gcc-config -l
-	emerge --oneshot -q libtool
+	gcc-config -l | grep "x86_64-pc-linux-gnu-4.5.3 \*" &> /dev/null \
+		|| \
+		(gcc-config -l \
+		&& emerge -uN -q '=sys-devel/gcc-4.5.3-r2' \
+		&& gcc-config x86_64-pc-linux-gnu-4.5.3 \
+		&& gcc-config -l \
+		&& emerge --oneshot -q libtool)
 	# -- gcc-4.6
 	emerge -uN -q '=sys-devel/gcc-4.6.2'
 	# -- gcc-4.1
@@ -89,6 +90,9 @@ gvim: portage-dirs
 	emerge -uN -j app-editors/gvim
 
 # -- Desktop
+gdm: portage-dirs
+	emerge -uN -j gnome-base/gdm
+
 xdg:
 	command -v xdg-mime &> /dev/null || emerge -uN -j x11-misc/xdg-utils
 
@@ -97,11 +101,11 @@ xdg-config: xdg evince nautilus
 	xdg-mime default evince.desktop application/pdf
 	xdg-mime default nautilus-browser.desktop application/pdf
 
-evince:
+evince: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v evince &> /dev/null || emerge -uN -j app-text/evince
 
-nautilus:
+nautilus: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	command -v nautilus &> /dev/null || emerge -uN -j gnome-base/nautilus
 
@@ -117,6 +121,10 @@ adobe-flash: portage-dirs
 python: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-lang/python
+	eselect python set python2.7
+	python-updater -- -j --with-bdeps y --keep-going
+	emerge --depclean -av -j
+	revdep-rebuild -v -- --ask -j
 
 pip: portage-dirs
 	cp -vf {files,${EPREFIX}}/etc/portage/package.use/pip
@@ -299,6 +307,7 @@ opencl: portage-dirs
 # -- CUDA
 nvidia-drivers: portage-dirs gcc
 	cp -vf {files,${EPREFIX}}/etc/portage/package.keywords/nvidia-drivers
+	cp -vf {files,${EPREFIX}}/etc/portage/package.use/nvidia-drivers
 	emerge -uN -j x11-drivers/nvidia-drivers
 	emerge -uN -j app-admin/eselect-opencl
 	eselect opencl set nvidia
