@@ -128,6 +128,10 @@ terminator: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/terminator
 
+chromium: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j www-client/chromium
+
 adobe-flash: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -j www-plugins/adobe-flash
