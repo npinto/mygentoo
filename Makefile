@@ -20,7 +20,7 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.license
 
 eix:
-	emerge -uN -j app-portage/eix
+	emerge -uN -j app-portage/eix app-portage/layman
 	cp -vf {files,${EPREFIX}}/etc/eix-sync.conf
 	eix-sync -q
 
