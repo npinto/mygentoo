@@ -95,7 +95,11 @@ gdm: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
 	emerge -uN -j gnome-base/gdm
 
-awesome: portage-dirs
+feh: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j media-gfx/feh
+
+awesome: portage-dirs feh
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
 	emerge -uN -j x11-wm/awesome
@@ -185,12 +189,12 @@ autopep8: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
 	emerge -uN -j dev-python/autopep8
 
-numpy: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numpy
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/numpy
+numpy: portage-dirs atlas
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/numpy
 
-scipy: portage-dirs
+scipy: portage-dirs atlas
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j sci-libs/scipy
@@ -248,7 +252,15 @@ cgkit: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -j dev-python/cgkit
 
-# -- C/C++
+# -- Scientific Libraries
+atlas: portage-dirs
+	emerge -uN sys-power/cpufrequtils
+	cpufreq-set -g performance
+	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
+	eselect blas set atlas-threads
+	eselect cblas set atlas-threads
+	eselect lapack set atlas
+
 icc: portage-dirs overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/icc
