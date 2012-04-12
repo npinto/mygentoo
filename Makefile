@@ -257,9 +257,9 @@ atlas: portage-dirs
 	emerge -uN sys-power/cpufrequtils
 	cpufreq-set -g performance
 	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
-	eselect blas set atlas-threads
-	eselect cblas set atlas-threads
-	eselect lapack set atlas
+	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
+	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
+	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
 
 icc: portage-dirs overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
