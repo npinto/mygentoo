@@ -103,7 +103,7 @@ awesome: portage-dirs feh
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
 	emerge -uN -j x11-wm/awesome
-	emerge --oneshot -u -j $(shell eix --only-names -s font-)
+	make fonts
 
 xdg:
 	command -v xdg-mime &> /dev/null || emerge -uN -j x11-misc/xdg-utils
@@ -128,10 +128,12 @@ nautilus: portage-dirs
 gnome-terminal: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/gnome-terminal
+	make fonts
 
 terminator: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j x11-terms/terminator
+	make fonts
 
 chromium: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
@@ -281,6 +283,12 @@ mkl: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/mkl
 	emerge -uN -j sci-libs/mkl
 
+shogun: portage-dirs layman
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
+	-layman -a sekyfsr
+	emerge -uN -j sci-libs/shogun
+
 # -- Database
 mongodb: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/mongodb
@@ -301,11 +309,13 @@ mplayer2: portage-dirs
 	emerge -uN -j media-video/mplayer2
 
 # -- Misc
-shogun: portage-dirs layman
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
-	-layman -a sekyfsr
-	emerge -uN -j sci-libs/shogun
+fonts:
+	emerge --oneshot -u -j $(shell eix --only-names -s font-)
+	# DejaVu fonts
+	emerge -uN -j media-fonts/dejavu
+	eselect fontconfig list | grep dejavu
+	fc-match | grep DejaVuSans || exit 1
+	fc-match "Monospace" | grep DejaVuSansMono || exit 1
 
 dropbox: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
