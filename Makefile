@@ -35,9 +35,11 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/env
 
 portage-sqlite: portage-dirs
-	# -- portage sql cache, see:
+	# -- portage sql cache
+	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
+	#  http://forums.gentoo.org/viewtopic.php?t=261580
 	emerge -uN -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	grep -e '^FEATURES.*=.*metadata-transfer' /etc/make.conf \
