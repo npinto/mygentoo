@@ -103,6 +103,7 @@ awesome: portage-dirs feh
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
 	emerge -uN -j x11-wm/awesome
+	emerge --oneshot -u -j $(shell eix --only-names -s font-)
 
 xdg:
 	command -v xdg-mime &> /dev/null || emerge -uN -j x11-misc/xdg-utils
@@ -194,10 +195,14 @@ numpy: portage-dirs atlas
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/numpy
 
-scipy: portage-dirs atlas
+scipy: portage-dirs numpy atlas
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j sci-libs/scipy
+
+matplotlib: portage-dirs scipy
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -j dev-python/matplotlib
 
 numexpr: portage-dirs mkl
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
