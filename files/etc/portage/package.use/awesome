@@ -3,3 +3,6 @@ x11-libs/cairo xcb
 media-libs/imlib2 png
 media-gfx/imagemagick png
 media-libs/gd fontconfig jpeg png truetype
+app-text/texlive extra
+app-doc/doxygen latex
+x11-wm/awesome doc

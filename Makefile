@@ -11,6 +11,19 @@ list:
 all:
 	make $(shell make list | grep -v all)
 
+update:
+	(test ${NO_EIX_SYNC} || \
+		eix-sync -q \
+		) || true
+	glsa-check -q -t all
+	glsa-check -q -f all
+	emerge -tavuDN -j --with-bdeps y --keep-going world system
+	emerge -tav --depclean
+	revdep-rebuild -v -- --ask
+	eclean-dist -d
+	eix-test-obsolete
+	dispatch-conf
+
 # -- Portage
 portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.use
@@ -21,9 +34,23 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.env
 	@mkdir -p ${EPREFIX}/etc/portage/env
 
-eix: layman
+portage-sqlite: portage-dirs
+	# -- portage sql cache, see:
+	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
+	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
+	emerge -uN -j dev-python/pysqlite
+	cp -f {files,${EPREFIX}}/etc/portage/modules
+	grep -e '^FEATURES.*=.*metadata-transfer' /etc/make.conf \
+		|| echo 'FEATURES="$${FEATURES} metadata-transfer"' >> /etc/make.conf
+	rm -rf /var/cache/edb/dep
+	emerge --metadata
+	make eix
+
+eix: portage-dirs layman
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
+	cp -f {files,${EPREFIX}}/etc/eixrc
 	eix-sync -q
 
 layman:
@@ -43,7 +70,7 @@ overlay-sekyfsr: OVERLAY=sekyfsr
 overlay-sekyfsr: _overlay
 
 # -- System
-gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
+#gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
@@ -327,7 +354,8 @@ dropbox: portage-dirs
 
 texlive: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -j app-text/texlive-core
+	emerge -uN -j app-text/texlive
+	#emerge -uN -j app-text/texlive-core
 
 cairo: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
@@ -339,7 +367,8 @@ ntfs3g: portage-dirs
 	emerge -uN -j sys-fs/ntfs3g
 
 valgrind: portage-dirs
-	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf || echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
+	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf \
+		|| echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
 	test ! -f /usr/lib/debug/usr/lib64/misc/glibc && emerge -q sys-libs/glibc
 	emerge -uN -j dev-util/valgrind
 
