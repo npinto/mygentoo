@@ -63,7 +63,7 @@ layman:
 
 _overlay:
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
-	layman -s ${OVERLAY}
+	layman -q -s ${OVERLAY}
 	egencache --repo='sekyfsr' --update
 
 overlay-sekyfsr: OVERLAY=sekyfsr
@@ -192,9 +192,7 @@ virtualenv: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
 	emerge -uN -j dev-python/virtualenv
 
-virtualenvwrapper: portage-dirs virtualenv
-	-layman -a sekyfsr
-	layman -S
+virtualenvwrapper: portage-dirs virtualenv overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
 	emerge -uN -j dev-python/virtualenvwrapper
 
@@ -310,10 +308,9 @@ mkl: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/mkl
 	emerge -uN -j sci-libs/mkl
 
-shogun: portage-dirs layman
+shogun: portage-dirs layman overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
-	-layman -a sekyfsr
 	emerge -uN -j sci-libs/shogun
 
 # -- Database
@@ -392,8 +389,7 @@ nvidia-settings: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j media-video/nvidia-settings
 
-cuda: portage-dirs layman nvidia-drivers nvidia-settings
-	-layman -a sekyfsr
+cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
