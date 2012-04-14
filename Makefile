@@ -72,6 +72,13 @@ overlay-sekyfsr: OVERLAY=sekyfsr
 overlay-sekyfsr: _overlay
 
 # -- System
+locale:
+	cp -f {files,${EPREFIX}}/etc/locale.gen
+	cp -f {files,${EPREFIX}}/etc/env.d/02locale
+	locale-gen -u
+	locale
+	env-update && source /etc/profile
+
 #gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 gcc:
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
@@ -336,7 +343,9 @@ mplayer2: portage-dirs
 
 # -- Misc
 fonts:
-	emerge --oneshot -u -j $(shell eix --only-names -s font-)
+	emerge -uN -j $(shell eix --only-names -s font-)
+	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
+	emerge -uN -j terminus-font intlfonts freefonts corefonts
 	# DejaVu fonts
 	emerge -uN -j media-fonts/dejavu
 	eselect fontconfig list | grep dejavu
