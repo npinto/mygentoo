@@ -1,2 +1,3 @@
-dev-db/mongodb ~amd64
-app-arch/snappy ~amd64
+dev-db/mongodb **
+app-arch/snappy **
+app-admin/eselect-boost **
