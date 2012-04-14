@@ -89,7 +89,7 @@ gcc:
 	# -- gcc-4.6
 	emerge -uN -q '=sys-devel/gcc-4.6.2'
 	# -- gcc-4.1
-	emerge -uN -q '=sys-devel/gcc-4.1.2'
+	#emerge -uN -q '=sys-devel/gcc-4.1.2'
 
 module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
