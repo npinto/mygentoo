@@ -12,14 +12,20 @@ all:
 	make $(shell make list | grep -v all)
 
 update:
-	(test ${NO_EIX_SYNC} || \
-		eix-sync -q \
-		) || true
+ifeq (${NO_EIX_SYNC},)
+	eix-sync -q
+endif
 	glsa-check -q -t all
 	glsa-check -q -f all
-	emerge -tavuDN -j --with-bdeps y --keep-going world system
-	emerge -tav --depclean
+ifeq (${NO_ASK},)
+	emerge --ask -tvuDN -j --with-bdeps y --keep-going world system
+	emerge --ask -tv --depclean
 	revdep-rebuild -v -- --ask
+else
+	emerge -tvuDN -j --with-bdeps y --keep-going world system
+	emerge -tv --depclean
+	revdep-rebuild -v
+endif
 	eclean-dist -d
 	eix-test-obsolete
 	dispatch-conf
@@ -95,10 +101,18 @@ gcc: portage-dirs
 		&& gcc-config x86_64-pc-linux-gnu-4.5.3 \
 		&& gcc-config -l \
 		&& emerge --oneshot -q libtool)
-	# -- gcc-4.6
-	emerge -uN -q '=sys-devel/gcc-4.6.2'
+	# -- gcc-3.4
+	#emerge -uN -q '=sys-devel/gcc-3.4.6-r2'
 	# -- gcc-4.1
 	#emerge -uN -q '=sys-devel/gcc-4.1.2'
+	# -- gcc-4.2
+	emerge -uN -q '=sys-devel/gcc-4.2.4-r1'
+	# -- gcc-4.3
+	emerge -uN -q '=sys-devel/gcc-4.3.6-r1'
+	# -- gcc-4.4
+	emerge -uN -q "=sys-devel/gcc-4.4.7"
+	# -- gcc-4.6
+	emerge -uN -q '=sys-devel/gcc-4.6.2'
 
 module-rebuild:
 	emerge -uN -j sys-kernel/module-rebuild
@@ -189,6 +203,12 @@ python: portage-dirs
 	python-updater -- -j --with-bdeps y --keep-going
 	emerge --depclean -av -j
 	revdep-rebuild -v -- --ask -j
+	#eselect python list | grep 'python2.7 *' || ( \
+		#eselect python set python2.7 \
+		#&& python-updater -- -j --with-bdeps y --keep-going \
+		#&& emerge --depclean -av -j \
+		#&& revdep-rebuild -v -- --ask -j \
+		#)
 
 pip: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
