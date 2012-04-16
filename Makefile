@@ -19,11 +19,13 @@ endif
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
 	emerge --ask -tvuDN -j --with-bdeps y --keep-going world system
-	emerge --ask -tv --depclean
+	#emerge --ask -tv --depclean
+	emerge --ask --depclean
 	revdep-rebuild -v -- --ask
 else
 	emerge -tvuDN -j --with-bdeps y --keep-going world system
-	emerge -tv --depclean
+	#emerge -tv --depclean
+	emerge --depclean
 	revdep-rebuild -v
 endif
 	eclean-dist -d
