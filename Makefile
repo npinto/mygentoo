@@ -40,13 +40,15 @@ portage-sqlite: portage-dirs
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-	emerge -uN -j dev-python/pysqlite
-	cp -f {files,${EPREFIX}}/etc/portage/modules
 	grep -e '^FEATURES.*=.*metadata-transfer' /etc/make.conf \
-		|| echo 'FEATURES="$${FEATURES} metadata-transfer"' >> /etc/make.conf
-	rm -rf /var/cache/edb/dep
-	emerge --metadata
-	make eix
+		|| ( \
+		emerge -uN -j dev-python/pysqlite \
+		&& cp -f {files,${EPREFIX}}/etc/portage/modules \
+		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> /etc/make.conf \
+		&& rm -rf /var/cache/edb/dep \
+		&& emerge --metadata \
+		&& make eix \
+		)
 
 eix: portage-dirs layman
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
