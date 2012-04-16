@@ -82,7 +82,7 @@ locale:
 	env-update && source /etc/profile
 
 #gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
-gcc:
+gcc: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.env/$@
