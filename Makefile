@@ -18,15 +18,15 @@ endif
 	glsa-check -q -t all
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
-	emerge --ask -tvuDN -j --with-bdeps y --keep-going world system
+	emerge --ask -qtuDN -j --with-bdeps y --keep-going world system
 	#emerge --ask -tv --depclean
 	emerge --ask --depclean
-	revdep-rebuild -v -- --ask
+	revdep-rebuild -- --ask
 else
-	emerge -tvuDN -j --with-bdeps y --keep-going world system
+	emerge -qtuDN -j --with-bdeps y --keep-going world system
 	#emerge -tv --depclean
 	emerge --depclean
-	revdep-rebuild -v
+	revdep-rebuild
 endif
 	eclean-dist -d
 	eix-test-obsolete
@@ -239,7 +239,8 @@ ipdb: portage-dirs ipython
 	emerge -uN -j dev-python/ipdb
 
 cython: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cython
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/cython
 
 pep8: portage-dirs
