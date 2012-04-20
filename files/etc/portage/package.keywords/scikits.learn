@@ -1,3 +1,3 @@
-sci-libs/scikits_learn ~amd64
-sci-libs/scikits ~amd64
-sci-libs/libsvm ~amd64
+sci-libs/scikits_learn **
+sci-libs/scikits **
+sci-libs/libsvm **

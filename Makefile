@@ -283,6 +283,10 @@ scikits.image: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/scikits.image
 	emerge -uN -j sci-libs/scikits_image
 
+Theano: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -j sci-libs/Theano
+
 pytables: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
 	emerge -uN -j dev-python/pytables
