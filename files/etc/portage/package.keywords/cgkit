@@ -1,1 +1,3 @@
-=dev-python/cgkit-9999 **
+dev-python/cgkit **
+dev-libs/boost **
+dev-util/boost-build **
