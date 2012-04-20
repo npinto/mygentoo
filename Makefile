@@ -441,7 +441,7 @@ cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 
 # -- Java
 ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
-	wget http://download.oracle.com/otn-pub/java/jdk/6u31-b04/jdk-6u31-linux-x64.bin
+	wget http://dl.dropbox.com/u/167753/fuck-oracle/jdk-6u31-linux-x64.bin
 	mv -vf jdk-6u31-linux-x64.bin $@
 
 sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
