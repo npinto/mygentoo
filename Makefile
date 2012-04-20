@@ -320,6 +320,7 @@ fabric: portage-dirs
 
 cgkit: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -j dev-python/cgkit
 
 # -- Scientific Libraries

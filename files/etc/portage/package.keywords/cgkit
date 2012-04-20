@@ -1,3 +1,4 @@
 dev-python/cgkit **
 dev-libs/boost **
 dev-util/boost-build **
+app-admin/eselect-boost **
