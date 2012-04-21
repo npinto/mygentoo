@@ -31,7 +31,7 @@ else
 	revdep-rebuild
 endif
 	eclean-dist -d
-	eix-test-obsolete
+	#eix-test-obsolete
 	dispatch-conf
 
 # -- Portage
@@ -105,17 +105,11 @@ gcc: portage-dirs
 		&& gcc-config x86_64-pc-linux-gnu-4.5.3 \
 		&& gcc-config -l \
 		&& emerge --oneshot -q libtool)
-	# -- gcc-3.4
 	#emerge -uN -q '=sys-devel/gcc-3.4.6-r2'
-	# -- gcc-4.1
 	#emerge -uN -q '=sys-devel/gcc-4.1.2'
-	# -- gcc-4.2
 	emerge -uN -q '=sys-devel/gcc-4.2.4-r1'
-	# -- gcc-4.3
 	emerge -uN -q '=sys-devel/gcc-4.3.6-r1'
-	# -- gcc-4.4
 	emerge -uN -q "=sys-devel/gcc-4.4.7"
-	# -- gcc-4.6
 	emerge -uN -q '=sys-devel/gcc-4.6.2'
 
 module-rebuild:
