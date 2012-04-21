@@ -31,7 +31,9 @@ else
 	revdep-rebuild
 endif
 	eclean-dist -d
+	eclean distfiles
 	#eix-test-obsolete
+	emaint --check world && emaint --fix world
 	dispatch-conf
 
 # -- Portage
@@ -198,6 +200,7 @@ python: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j dev-lang/python
 	eselect python set python2.7
+	# XXX: python-updater -dmanual -dpylibdir -dPYTHON_ABIS -dshared_linking -dstatic_linking
 	python-updater -- -q -j --with-bdeps y --keep-going
 	emerge --depclean -av -j
 	revdep-rebuild -v -- --ask -j
