@@ -2,6 +2,7 @@ me:
 	make _$(shell hostname)
 
 _dev:
+	make portage-sqlite
 	make adobe-flash
 	make atlas
 	make autopep8
@@ -24,14 +25,12 @@ _dev:
 	make gnome-terminal
 	make gthumb
 	make gvim
-	make help
 	make icc
 	make imagemagick
 	make ipdb
 	make ipython
 	make joblib
 	make layman
-	make list
 	make locale
 	make matplotlib
 	make mkl
@@ -48,8 +47,6 @@ _dev:
 	make parallel
 	make pep8
 	make pip
-	make portage-dirs
-	make portage-sqlite
 	make pycuda
 	make pymongo
 	make pyopencl

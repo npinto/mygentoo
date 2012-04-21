@@ -22,12 +22,12 @@ endif
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	#emerge --ask -tv --depclean
-	emerge --ask --depclean
+	emerge --ask --depclean -q
 	revdep-rebuild -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
 	#emerge -tv --depclean
-	emerge --depclean
+	emerge --depclean -q
 	revdep-rebuild
 endif
 	eclean-dist -d
@@ -326,7 +326,7 @@ cgkit: portage-dirs
 
 # -- Scientific Libraries
 atlas: portage-dirs
-	emerge -uN sys-power/cpufrequtils
+	emerge -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance
 	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
