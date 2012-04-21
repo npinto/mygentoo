@@ -367,9 +367,9 @@ imagemagick: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/imagemagick
 	emerge -uN -q -j media-gfx/imagemagick
 
-mplayer2: portage-dirs
+mplayer: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j media-video/mplayer2
+	emerge -uN -q -j media-video/mplayer
 
 # -- Misc
 fonts:
