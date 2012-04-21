@@ -74,6 +74,7 @@ _dev:
 
 _primo: _dev
 _logilo: _dev
+_thor-dev-1: _dev
 
 _honeybadger:
 	make portage-sqlite
