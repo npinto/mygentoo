@@ -278,11 +278,11 @@ joblib: portage-dirs
 	emerge -uN -q -j dev-python/joblib
 
 scikits.learn: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/scikits.learn
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j sci-libs/scikits_learn
 
 scikits.image: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/scikits.image
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j sci-libs/scikits_image
 
 Theano: portage-dirs
@@ -411,6 +411,10 @@ valgrind: portage-dirs
 		|| echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
 	test ! -f /usr/lib/debug/usr/lib64/misc/glibc && emerge -q sys-libs/glibc
 	emerge -uN -q -j dev-util/valgrind
+
+megacli: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -q -j sys-block/megacli
 
 # -- OpenCL
 opencl: portage-dirs
