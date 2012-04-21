@@ -1,5 +1,7 @@
 default: help
 
+include machines.mk
+
 help:
 	make list
 
