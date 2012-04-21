@@ -403,7 +403,10 @@ ntfs3g: portage-dirs
 valgrind: portage-dirs
 	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf \
 		|| echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
-	test ! -d /usr/lib/debug/usr/lib64/misc/glibc && emerge -q sys-libs/glibc
+	#test ! -d /usr/lib/debug/usr/lib64/misc/glibc && emerge -q sys-libs/glibc
+ifeq ($(shell test -d /usr/lib/debug/usr/lib64/misc/glibc),)
+	emerge -q sys-libs/glibc
+endif
 	emerge -uN -q -j dev-util/valgrind
 
 megacli: portage-dirs
