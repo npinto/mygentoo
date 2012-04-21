@@ -1,6 +1,83 @@
-
 me:
 	make _$(shell hostname)
+
+_dev:
+	make adobe-flash
+	make atlas
+	make autopep8
+	make awesome
+	make bind
+	make cairo
+	make cgkit
+	make chromium
+	make cuda
+	make cython
+	make dropbox
+	make eix
+	make evince
+	make fabric
+	make feh
+	make fonts
+	make freeimage
+	make gcc
+	make gdm
+	make gnome-terminal
+	make gthumb
+	make gvim
+	make help
+	make icc
+	make imagemagick
+	make ipdb
+	make ipython
+	make joblib
+	make layman
+	make list
+	make locale
+	make matplotlib
+	make mkl
+	make module-rebuild
+	make mongodb
+	make mplayer
+	make nautilus
+	make ntfs3g
+	make numexpr
+	make numpy
+	make nvidia-drivers
+	make nvidia-settings
+	make opencl
+	make parallel
+	make pep8
+	make pip
+	make portage-dirs
+	make portage-sqlite
+	make pycuda
+	make pymongo
+	make pyopencl
+	make pyqt4
+	make pytables
+	make python
+	make scikits.image
+	make scikits.learn
+	make scipy
+	make setuptools
+	make shogun
+	make simplejson
+	make sun-jdk
+	make tbb
+	make terminator
+	make texlive
+	make Theano
+	make valgrind
+	make vim
+	make virtualenv
+	make virtualenvwrapper
+	make wgetpaste
+	make xdg
+	make xdg-config
+
+_primo: _dev
+_logilo: _dev
+_thor-dev-1: _dev
 
 _honeybadger:
 	make portage-sqlite
