@@ -1,5 +1,8 @@
 
-_hb-server:
+me:
+	make _$(shell hostname)
+
+_honeybadger:
 	make portage-sqlite
 	make eix
 	make locale
