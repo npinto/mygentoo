@@ -349,23 +349,29 @@ mkl: portage-dirs
 	emerge -uN -q -j sci-libs/mkl
 
 shogun: portage-dirs layman overlay-sekyfsr
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j sci-libs/shogun
 
 # -- Database
 mongodb: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/mongodb
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
+opencv: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -q -j media-libs/opencv
+
 freeimage: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j media-libs/freeimage
 
 imagemagick: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/imagemagick
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j media-gfx/imagemagick
 
 mplayer: portage-dirs
