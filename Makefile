@@ -21,13 +21,11 @@ endif
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
-	#emerge --ask -tv --depclean
-	emerge --ask --depclean -q
+	emerge --ask --depclean -q # -tv
 	revdep-rebuild -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
-	#emerge -tv --depclean
-	emerge --depclean -q
+	emerge --depclean -q #-tv
 	revdep-rebuild
 endif
 	eclean-dist -d
@@ -460,4 +458,3 @@ ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -q -j dev-java/sun-jdk
-
