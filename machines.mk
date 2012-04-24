@@ -71,6 +71,7 @@ _dev:
 	make wgetpaste
 	make xdg
 	make xdg-config
+	#make opencv
 
 _primo: _dev
 _logilo: _dev
@@ -126,6 +127,7 @@ _honeybadger:
 	make imagemagick
 	make gthumb
 	make mplayer
+	#make opencv
 	# --
 	make mongodb
 	make pymongo

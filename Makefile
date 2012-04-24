@@ -21,13 +21,11 @@ endif
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
-	#emerge --ask -tv --depclean
-	emerge --ask --depclean -q
+	emerge --ask --depclean -q # -tv
 	revdep-rebuild -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
-	#emerge -tv --depclean
-	emerge --depclean -q
+	emerge --depclean -q #-tv
 	revdep-rebuild
 endif
 	eclean-dist -d
@@ -350,23 +348,29 @@ mkl: portage-dirs
 	emerge -uN -q -j sci-libs/mkl
 
 shogun: portage-dirs layman overlay-sekyfsr
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j sci-libs/shogun
 
 # -- Database
 mongodb: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/mongodb
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
+opencv: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -q -j media-libs/opencv
+
 freeimage: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j media-libs/freeimage
 
 imagemagick: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/imagemagick
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j media-gfx/imagemagick
 
 mplayer: portage-dirs
@@ -455,4 +459,3 @@ ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -q -j dev-java/sun-jdk
-
