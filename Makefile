@@ -193,6 +193,7 @@ chromium: portage-dirs
 
 adobe-flash: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j www-plugins/adobe-flash
 
 # -- Python
@@ -441,8 +442,8 @@ cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
-	emerge -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.1'
-	emerge -uN -q -j '=dev-util/nvidia-cuda-sdk-4.1'
+	emerge -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
+	emerge -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
 	emerge -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
 
