@@ -359,6 +359,10 @@ mongodb: portage-dirs
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
+jpeg:
+	emerge --deselect media-libs/jpeg
+	emerge -uN -q -j media-libs/libjpeg-turbo
+
 opencv: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@

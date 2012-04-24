@@ -26,6 +26,7 @@ _dev:
 	make gthumb
 	make gvim
 	make icc
+	make jpeg
 	make imagemagick
 	make ipdb
 	make ipython
@@ -123,6 +124,7 @@ _honeybadger:
 	make tbb
 	make shogun
 	# --
+	make jpeg
 	make freeimage
 	make imagemagick
 	make gthumb
