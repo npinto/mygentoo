@@ -2,12 +2,11 @@ default: help
 
 include machines.mk
 
-help:
-	make list
+help: _list
 
-list:
-	@#@echo Available targets:
-	@#@echo ------------------
+_list:
+	@echo Available targets:
+	@echo ------------------
 	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
 
 #all:
@@ -21,13 +20,11 @@ endif
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
-	#emerge --ask -tv --depclean
-	emerge --ask --depclean -q
+	emerge --ask --depclean -q # -tv
 	revdep-rebuild -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
-	#emerge -tv --depclean
-	emerge --depclean -q
+	emerge --depclean -q #-tv
 	revdep-rebuild
 endif
 	eclean-dist -d
@@ -52,11 +49,11 @@ portage-sqlite: portage-dirs
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-	grep -e '^FEATURES.*=.*metadata-transfer' /etc/make.conf \
+	grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf \
 		|| ( \
 		emerge -uN -q -j dev-python/pysqlite \
 		&& cp -f {files,${EPREFIX}}/etc/portage/modules \
-		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> /etc/make.conf \
+		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf \
 		&& rm -rf /var/cache/edb/dep \
 		&& emerge --metadata \
 		&& make eix \
@@ -193,6 +190,7 @@ chromium: portage-dirs
 
 adobe-flash: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j www-plugins/adobe-flash
 
 # -- Python
@@ -200,6 +198,7 @@ python: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j dev-lang/python
 	eselect python set python2.7
+ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	#python-updater -- -q -j --with-bdeps y --keep-going
 	python-updater \
 		-dmanual -dpylibdir -dPYTHON_ABIS -dshared_linking -dstatic_linking \
@@ -212,6 +211,7 @@ python: portage-dirs
 		#&& emerge --depclean -av -q -j \
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
+endif
 
 pip: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
@@ -327,7 +327,7 @@ cgkit: portage-dirs
 # -- Scientific Libraries
 atlas: portage-dirs
 	emerge -uN -q -j sys-power/cpufrequtils
-	cpufreq-set -g performance
+	cpufreq-set -g performance || true
 	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
@@ -349,23 +349,33 @@ mkl: portage-dirs
 	emerge -uN -q -j sci-libs/mkl
 
 shogun: portage-dirs layman overlay-sekyfsr
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/shogun
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/shogun
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j sci-libs/shogun
 
 # -- Database
 mongodb: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/mongodb
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mongodb
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
+jpeg:
+	emerge --deselect media-libs/jpeg
+	emerge -uN -q -j media-libs/libjpeg-turbo
+
+opencv: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -q -j media-libs/opencv
+
 freeimage: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/freeimage
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j media-libs/freeimage
 
 imagemagick: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/imagemagick
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j media-gfx/imagemagick
 
 mplayer: portage-dirs
@@ -441,8 +451,8 @@ cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
-	emerge -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.1'
-	emerge -uN -q -j '=dev-util/nvidia-cuda-sdk-4.1'
+	emerge -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
+	emerge -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
 	emerge -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
 
@@ -454,4 +464,3 @@ ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	emerge -uN -q -j dev-java/sun-jdk
-

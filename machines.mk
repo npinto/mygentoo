@@ -26,6 +26,7 @@ _dev:
 	make gthumb
 	make gvim
 	make icc
+	make jpeg
 	make imagemagick
 	make ipdb
 	make ipython
@@ -71,6 +72,7 @@ _dev:
 	make wgetpaste
 	make xdg
 	make xdg-config
+	#make opencv
 
 _primo: _dev
 _logilo: _dev
@@ -122,10 +124,12 @@ _honeybadger:
 	make tbb
 	make shogun
 	# --
+	make jpeg
 	make freeimage
 	make imagemagick
 	make gthumb
 	make mplayer
+	#make opencv
 	# --
 	make mongodb
 	make pymongo
