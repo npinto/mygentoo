@@ -327,6 +327,7 @@ cgkit: portage-dirs
 # -- Scientific Libraries
 atlas: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
 	emerge -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
 	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
