@@ -2,12 +2,11 @@ default: help
 
 include machines.mk
 
-help:
-	make list
+help: _list
 
-list:
-	@#@echo Available targets:
-	@#@echo ------------------
+_list:
+	@echo Available targets:
+	@echo ------------------
 	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
 
 #all:
