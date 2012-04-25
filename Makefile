@@ -199,6 +199,7 @@ python: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j dev-lang/python
 	eselect python set python2.7
+ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	#python-updater -- -q -j --with-bdeps y --keep-going
 	python-updater \
 		-dmanual -dpylibdir -dPYTHON_ABIS -dshared_linking -dstatic_linking \
@@ -211,6 +212,7 @@ python: portage-dirs
 		#&& emerge --depclean -av -q -j \
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
+endif
 
 pip: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
