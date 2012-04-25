@@ -328,7 +328,7 @@ cgkit: portage-dirs
 # -- Scientific Libraries
 atlas: portage-dirs
 	emerge -uN -q -j sys-power/cpufrequtils
-	cpufreq-set -g performance
+	cpufreq-set -g performance || true
 	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
