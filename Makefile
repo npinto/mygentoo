@@ -9,9 +9,6 @@ _list:
 	@echo ------------------
 	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
 
-#all:
-	#make $(shell make list | grep -v all)
-
 update:
 ifeq (${NO_EIX_SYNC},)
 	eix-sync -q
