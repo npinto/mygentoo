@@ -139,7 +139,7 @@ gvim: portage-dirs
 	emerge -uN -q -j app-editors/gvim
 
 # -- Desktop
-gdm: portage-dirs
+gdm: portage-dirs xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
 	emerge -uN -q -j gnome-base/gdm
@@ -148,7 +148,7 @@ feh: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j media-gfx/feh
 
-awesome: portage-dirs feh
+awesome: portage-dirs xorg-server feh
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
 	emerge -uN -q -j x11-wm/awesome
@@ -430,15 +430,11 @@ megacli: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	emerge -uN -q -j sys-block/megacli
 
-# -- OpenCL
-opencl: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
-	emerge -uN -q -j virtual/opencl
+# -- X
+xorg-server: portage-dirs
+	emerge -uN -q -j x11-base/xorg-server
 
-# -- CUDA
-nvidia-drivers: portage-dirs gcc
+nvidia-drivers: portage-dirs gcc xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j x11-drivers/nvidia-drivers
@@ -450,6 +446,14 @@ nvidia-settings: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j media-video/nvidia-settings
 
+# -- OpenCL
+opencl: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	emerge -uN -q -j virtual/opencl
+
+# -- CUDA
 cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
