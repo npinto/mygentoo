@@ -432,6 +432,7 @@ megacli: portage-dirs
 
 # -- X
 xorg-server: portage-dirs
+	emerge -uN -q -j x11-proto/glproto
 	emerge -uN -q -j x11-base/xorg-server
 
 nvidia-drivers: portage-dirs gcc xorg-server
