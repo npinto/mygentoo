@@ -74,7 +74,7 @@ layman:
 _overlay:
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
-	egencache --repo='sekyfsr' --update
+	egencache --repo=${OVERLAY} --update
 
 overlay-sekyfsr: OVERLAY=sekyfsr
 overlay-sekyfsr: _overlay
