@@ -279,6 +279,7 @@ scikits.learn: portage-dirs
 
 scikits.image: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -q -j dev-python/pyfits
 	emerge -uN -q -j sci-libs/scikits_image
 
 Theano: portage-dirs
