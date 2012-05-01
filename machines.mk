@@ -73,6 +73,8 @@ _dev:
 	make xdg
 	make xdg-config
 	#make opencv
+	# --
+	emerge -uN -q -j dev-python/pyfits
 
 _primo: _dev
 _logilo: _dev
