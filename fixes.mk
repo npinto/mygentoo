@@ -1,4 +1,5 @@
-all: libpng14-news pambase-freeze v8-revdep-rebuild
+all: libpng14-news pambase-freeze v8-revdep-rebuild \
+	glsa-201203-12
 
 libpng14-news:
 	revdep-rebuild -q --library libpng14.so.14 -- --keep-going
@@ -13,3 +14,7 @@ pambase-freeze:
 v8-revdep-rebuild:
 	revdep-rebuild -q --library '/usr/lib64/libv8-3.6.6.11.so'
 	rm -vf '/usr/lib64/libv8-3.6.6.11.so'
+
+glsa-201203-12:
+	emerge --sync --quiet
+	emerge --oneshot --verbose ">=dev-libs/openssl-1.0.0g"
