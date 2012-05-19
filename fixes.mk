@@ -13,7 +13,13 @@ pambase-freeze:
 
 v8-revdep-rebuild:
 	revdep-rebuild -q --library '/usr/lib64/libv8-3.6.6.11.so'
-	rm -vf '/usr/lib64/libv8-3.6.6.11.so'
+	rm -f '/usr/lib64/libv8-3.6.6.11.so'
+	revdep-rebuild -q --library '/usr/lib64/libv8.so.3.7.12.20'
+	rm -f '/usr/lib64/libv8.so.3.7.12.20'
+	revdep-rebuild -q --library '/usr/lib64/libv8.so.3.7.12.29'
+	rm -f '/usr/lib64/libv8.so.3.7.12.29'
+	revdep-rebuild -q --library '/usr/lib64/libv8.so.3.8.9'
+	rm -f '/usr/lib64/libv8.so.3.8.9'
 
 glsa-201203-12:
 	emerge --sync --quiet
