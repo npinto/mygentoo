@@ -365,11 +365,14 @@ shogun: portage-dirs layman overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j sci-libs/shogun
 
+boost:
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
+	emerge -uN -q -j dev-libs/boost dev-util/boost-build
+
 # -- Database
-mongodb: portage-dirs
+mongodb: portage-dirs boost
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-libs/boost dev-util/boost-build
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
