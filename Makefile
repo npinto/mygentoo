@@ -18,11 +18,11 @@ endif
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	emerge --ask --depclean -q # -tv
-	revdep-rebuild -- --ask
+	revdep-rebuild -i -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
 	emerge --depclean -q #-tv
-	revdep-rebuild
+	revdep-rebuild -i
 endif
 	eclean-dist -d
 	eclean distfiles
@@ -150,6 +150,7 @@ gdm: portage-dirs xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
 	emerge -uN -q -j gnome-base/gdm
+	rc-update add xdm default
 
 feh: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
@@ -368,6 +369,7 @@ shogun: portage-dirs layman overlay-sekyfsr
 mongodb: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -q -j dev-libs/boost dev-util/boost-build
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
