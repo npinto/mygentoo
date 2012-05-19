@@ -211,8 +211,13 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	python-updater \
 		-dmanual -dpylibdir -dPYTHON_ABIS -dshared_linking -dstatic_linking \
 		-- -q -j --with-bdeps y --keep-going
-	emerge --depclean -av -j
-	revdep-rebuild -v -- --ask -j
+#ifeq (${NO_ASK},)
+	#emerge --depclean -av -j
+	#revdep-rebuild -v -- --ask -j
+#else
+	emerge --depclean -v -j
+	revdep-rebuild -v -- -j
+#endif
 	#eselect python list | grep 'python2.7 *' || ( \
 		#eselect python set python2.7 \
 		#&& python-updater -- -q -j --with-bdeps y --keep-going \
@@ -365,11 +370,14 @@ shogun: portage-dirs layman overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	emerge -uN -q -j sci-libs/shogun
 
+boost:
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
+	emerge -uN -q -j dev-libs/boost dev-util/boost-build
+
 # -- Database
-mongodb: portage-dirs
+mongodb: portage-dirs boost
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-libs/boost dev-util/boost-build
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
