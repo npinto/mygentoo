@@ -3,6 +3,7 @@ me:
 
 _dev:
 	make portage-sqlite
+	make autounmask
 	make adobe-flash
 	make atlas
 	make autopep8
