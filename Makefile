@@ -40,6 +40,16 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.env
 	@mkdir -p ${EPREFIX}/etc/portage/env
 
+autounmask: portage-dirs
+	@touch ${EPREFIX}/etc/portage/package.use/z_autounmask
+	@touch ${EPREFIX}/etc/portage/package.keywords/z_autounmask
+	@touch ${EPREFIX}/etc/portage/package.mask/z_autounmask
+	@touch ${EPREFIX}/etc/portage/package.unmask/z_autounmask
+	@touch ${EPREFIX}/etc/portage/package.license/z_autounmask
+ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' ${EPREFIX}/etc/make.conf; then echo true; else echo false; fi), false)
+	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
+endif
+
 portage-sqlite: portage-dirs
 	# -- portage sql cache
 	# See:
@@ -385,7 +395,7 @@ mplayer: portage-dirs
 
 # -- Misc
 fonts:
-	emerge -uN -q -j $(shell eix --only-names -s font-)
+	emerge -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
 	emerge -uN -q -j terminus-font intlfonts freefonts corefonts
 	# DejaVu fonts
