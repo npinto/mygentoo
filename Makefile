@@ -358,6 +358,7 @@ shogun: portage-dirs layman overlay-sekyfsr
 mongodb: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -q -j dev-libs/boost dev-util/boost-build
 	emerge -uN -q -j dev-db/mongodb
 
 # -- Image / Video
