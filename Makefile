@@ -18,11 +18,11 @@ endif
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	emerge --ask --depclean -q # -tv
-	revdep-rebuild -i -- --ask
+	revdep-rebuild -q -i -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
 	emerge --depclean -q #-tv
-	revdep-rebuild -i
+	revdep-rebuild -q -i
 endif
 	eclean-dist -d
 	eclean distfiles
@@ -215,8 +215,8 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	#emerge --depclean -av -j
 	#revdep-rebuild -v -- --ask -j
 #else
-	emerge --depclean -v -j
-	revdep-rebuild -v -- -j
+	emerge -q --depclean -v -j
+	revdep-rebuild -q -v -- -j
 #endif
 	#eselect python list | grep 'python2.7 *' || ( \
 		#eselect python set python2.7 \
