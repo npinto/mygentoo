@@ -18,11 +18,11 @@ endif
 ifeq (${NO_ASK},)
 	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	emerge --ask --depclean -q # -tv
-	revdep-rebuild -- --ask
+	revdep-rebuild -i -- --ask
 else
 	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
 	emerge --depclean -q #-tv
-	revdep-rebuild
+	revdep-rebuild -i
 endif
 	eclean-dist -d
 	eclean distfiles
@@ -74,7 +74,7 @@ layman:
 _overlay:
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
-	egencache --repo='sekyfsr' --update
+	egencache --repo=${OVERLAY} --update
 
 overlay-sekyfsr: OVERLAY=sekyfsr
 overlay-sekyfsr: _overlay
@@ -280,6 +280,7 @@ scikits.learn: portage-dirs
 
 scikits.image: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	emerge -uN -q -j dev-python/pyfits
 	emerge -uN -q -j sci-libs/scikits_image
 
 Theano: portage-dirs

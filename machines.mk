@@ -73,6 +73,7 @@ _dev:
 	make xdg
 	make xdg-config
 	#make opencv
+	# --
 
 _primo: _dev
 _logilo: _dev
