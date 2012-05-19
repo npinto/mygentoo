@@ -140,6 +140,7 @@ gdm: portage-dirs xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
 	emerge -uN -q -j gnome-base/gdm
+	rc-update add xdm default
 
 feh: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
