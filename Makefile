@@ -211,8 +211,13 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	python-updater \
 		-dmanual -dpylibdir -dPYTHON_ABIS -dshared_linking -dstatic_linking \
 		-- -q -j --with-bdeps y --keep-going
+ifeq (${NO_ASK},)
 	emerge --depclean -av -j
 	revdep-rebuild -v -- --ask -j
+else
+	emerge --depclean -v -j
+	revdep-rebuild -v -- -j
+endif
 	#eselect python list | grep 'python2.7 *' || ( \
 		#eselect python set python2.7 \
 		#&& python-updater -- -q -j --with-bdeps y --keep-going \
