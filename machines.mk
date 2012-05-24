@@ -75,6 +75,7 @@ _dev:
 	make xdg-config
 	#make opencv
 	# --
+	emerge -uN -j sys-fs/ncdu
 
 _primo: _dev
 _logilo: _dev
