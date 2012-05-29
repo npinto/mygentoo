@@ -241,7 +241,7 @@ virtualenv: portage-dirs
 
 virtualenvwrapper: portage-dirs virtualenv overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
-	emerge -uN -q -j dev-python/virtualenvwrapper
+	USE_PYTHON='2.7' emerge -uN -q -j dev-python/virtualenvwrapper
 
 ipython: portage-dirs pyqt4
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/ipython
