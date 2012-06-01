@@ -374,6 +374,10 @@ boost:
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
 	emerge -uN -q -j dev-libs/boost dev-util/boost-build
 
+hdf5:
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	emerge -uN -q -j sci-libs/hdf5
+
 # -- Database
 mongodb: portage-dirs boost
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
