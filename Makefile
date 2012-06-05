@@ -215,8 +215,8 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	#emerge --depclean -av -j
 	#revdep-rebuild -v -- --ask -j
 #else
-	emerge -q --depclean -v -j
-	revdep-rebuild -q -v -- -j
+	emerge -q --depclean -j
+	revdep-rebuild -q -- -j
 #endif
 	#eselect python list | grep 'python2.7 *' || ( \
 		#eselect python set python2.7 \
