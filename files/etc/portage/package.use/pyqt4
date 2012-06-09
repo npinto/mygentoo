@@ -1,4 +1,4 @@
-dev-python/PyQt4 X dbus
+dev-python/PyQt4 X dbus svg
 x11-libs/qt-qt3support pch
 x11-libs/qt-gui pch dbus
 x11-libs/qt-core pch
