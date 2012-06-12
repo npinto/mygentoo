@@ -278,6 +278,7 @@ scipy: portage-dirs numpy atlas
 	${EMERGE} -uN -q -j sci-libs/scipy
 
 matplotlib: portage-dirs scipy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j dev-python/matplotlib
 
@@ -341,7 +342,7 @@ cgkit: portage-dirs
 	${EMERGE} -uN -q -j dev-python/cgkit
 
 # -- Scientific Libraries
-atlas: portage-dirs
+install/atlas: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
@@ -351,6 +352,8 @@ atlas: portage-dirs
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
 	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
+	touch $@
+atlas: install/atlas
 
 icc: portage-dirs overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
