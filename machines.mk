@@ -1,17 +1,20 @@
 me:
 	make _$(shell hostname)
 
+_desktop:
+	make awesome
+	make chromium
+	make adobe-flash
+	make gnome-terminal
+
 _dev:
 	make portage-sqlite
-	make autounmask
-	make adobe-flash
+	#make autounmask
 	make atlas
 	make autopep8
-	make awesome
-	make bind
+	#make bind
 	make cairo
-	make cgkit
-	make chromium
+	#make cgkit
 	make cuda
 	make cython
 	make dropbox
@@ -23,7 +26,6 @@ _dev:
 	make freeimage
 	make gcc
 	make gdm
-	make gnome-terminal
 	make gthumb
 	make gvim
 	make icc
@@ -77,9 +79,9 @@ _dev:
 	# --
 	emerge -uN -j sys-fs/ncdu
 
-_primo: _dev
-_logilo: _dev
-_thor-dev-1: _dev
+_primo: _dev _desktop
+_logilo: _dev _desktop
+_thor-dev-1: _dev _desktop
 
 _honeybadger:
 	make portage-sqlite

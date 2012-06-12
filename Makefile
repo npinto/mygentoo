@@ -47,8 +47,8 @@ autounmask: portage-dirs
 	@touch ${EPREFIX}/etc/portage/package.mask/z_autounmask
 	@touch ${EPREFIX}/etc/portage/package.unmask/z_autounmask
 	@touch ${EPREFIX}/etc/portage/package.license/z_autounmask
-ifeq ($(shell if grep -e '^${EMERGE}_DEFAULT_OPTS = "$${${EMERGE}_DEFAULT_OPTS} --autounmask-write=y"' ${EPREFIX}/etc/make.conf; then echo true; else echo false; fi), false)
-	echo '${EMERGE}_DEFAULT_OPTS = "$${${EMERGE}_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
+ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' ${EPREFIX}/etc/make.conf; then echo true; else echo false; fi), false)
+	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
 portage-sqlite: portage-dirs
@@ -62,7 +62,7 @@ portage-sqlite: portage-dirs
 		${EMERGE} -uN -q -j dev-python/pysqlite \
 		&& cp -f {files,${EPREFIX}}/etc/portage/modules \
 		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf \
-		&& rm -rf /var/cache/edb/dep \
+		&& rm -rf ${EPREFIX}/var/cache/edb/dep \
 		&& ${EMERGE} --metadata \
 		&& make eix \
 		)
@@ -76,9 +76,9 @@ eix: portage-dirs layman
 
 layman:
 	${EMERGE} -uN -q -j app-portage/layman
-	touch /var/lib/layman/make.conf
-	grep -e '^source.*layman.*' /etc/make.conf \
-		|| echo "source /var/lib/layman/make.conf" >> /etc/make.conf
+	touch ${EPREFIX}/var/lib/layman/make.conf
+	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
+		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
 
@@ -125,7 +125,8 @@ module-rebuild:
 
 # -- Network
 bind:
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/bind
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j net-dns/bind
 
 # -- Shell tools
