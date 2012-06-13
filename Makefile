@@ -403,6 +403,7 @@ freeimage: portage-dirs
 
 imagemagick: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	${EMERGE} -uN -q -j media-gfx/imagemagick
 
 mplayer: portage-dirs
