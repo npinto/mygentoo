@@ -384,13 +384,17 @@ pyopencl: portage-dirs opencl
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j dev-python/pyopencl
 
-simplejson: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/simplejson: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/simplejson
+	touch $@
+simplejson: install/simplejson
 
-fabric: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/fabric: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/fabric
+	touch $@
+fabric: install/fabric
 
 cgkit: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
