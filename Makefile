@@ -115,6 +115,8 @@ install/gcc: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.env/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/env/simple-cflags
+	${EMERGE} -uN -q '=sys-devel/gcc-4.2.4-r1'
+ifeq ($(strip ${EPREFIX}), )
 	# -- gcc-4.5 (default)
 	gcc-config -l | grep "x86_64-pc-linux-gnu-4.5.3 \*" &> /dev/null \
 		|| \
@@ -125,10 +127,10 @@ install/gcc: install/portage-dirs
 		&& ${EMERGE} --oneshot -q libtool)
 	#${EMERGE} -uN -q '=sys-devel/gcc-3.4.6-r2'
 	#${EMERGE} -uN -q '=sys-devel/gcc-4.1.2'
-	${EMERGE} -uN -q '=sys-devel/gcc-4.2.4-r1'
 	${EMERGE} -uN -q '=sys-devel/gcc-4.3.6-r1'
 	${EMERGE} -uN -q "=sys-devel/gcc-4.4.7"
 	${EMERGE} -uN -q "=sys-devel/gcc-4.6*"
+endif
 	touch $@
 gcc: install/gcc
 
