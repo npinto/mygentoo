@@ -254,14 +254,18 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 		#)
 endif
 
-pip: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pip
+install/pip: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pip
+	touch $@
+pip: install/pip
 
-setuptools: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
+install/setuptools: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/setuptools
+	touch $@
+setuptools: install/setuptools
 
 install/virtualenv: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -279,6 +283,7 @@ install/ipython: install/portage-dirs install/pyqt4
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/ipython
+	touch $@
 ipython: install/ipython
 
 install/ipdb: install/portage-dirs install/ipython
@@ -334,9 +339,11 @@ install/numexpr: install/portage-dirs install/mkl
 	touch $@
 numexpr: install/numexpr
 
-joblib: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/joblib: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/joblib
+	touch $@
+joblib: install/joblib
 
 install/scikits.learn: install/portage-dirs install/numpy
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -357,9 +364,11 @@ install/Theano: install/portage-dirs install/numpy
 	touch $@
 Theano: install/Theano
 
-pytables: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
+install/pytables: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pytables
+	touch $@
+pytables: install/pytables
 
 install/pymongo: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
