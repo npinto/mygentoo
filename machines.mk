@@ -110,7 +110,7 @@ _honeybadger:
 	# --
 	make atlas
 	make numpy scipy
-	#make matplotlib
+	make matplotlib
 	make cython
 	make pep8 autopep8
 	make joblib
@@ -173,7 +173,8 @@ _prefix:
 	make virtualenv virtualenvwrapper
 	# --
 	make atlas
-	make numpy scipy matplotlib
+	make numpy scipy
+	#make matplotlib
 	make cython
 	make pep8 autopep8
 	make joblib

@@ -230,8 +230,8 @@ adobe-flash: portage-dirs
 	${EMERGE} -uN -q -j www-plugins/adobe-flash
 
 # -- Python
-python: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/python: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-lang/python
 	eselect python set python2.7
 ifneq ($(shell eselect python list | grep python | wc -l), 1)
@@ -253,6 +253,8 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
 endif
+	touch $@
+python: install/python
 
 install/pip: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
