@@ -67,6 +67,7 @@ portage-sqlite: portage-dirs
 	grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf \
 		|| ( \
 		${EMERGE} -uN -q -j dev-python/pysqlite \
+		&& pwd \
 		&& cp -f {files,${EPREFIX}}/etc/portage/modules \
 		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf \
 		&& rm -rf ${EPREFIX}/var/cache/edb/dep \
