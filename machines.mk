@@ -204,7 +204,7 @@ _prefix:
 	#make mongodb
 	make pymongo
 	# --
-	make texlive
+	#make texlive
 	make wgetpaste
 	# --
 	#make megacli
@@ -212,7 +212,6 @@ _prefix:
 	#make tbb
 	#make terminator
 	#make texlive
-	#make Theano
 	#make valgrind
 	#make vim
 	#make wgetpaste
