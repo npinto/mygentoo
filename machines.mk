@@ -1,3 +1,5 @@
+include init.mk
+
 me:
 ifeq ($(strip ${EPREFIX}), )
 	make _$(shell hostname)
@@ -81,7 +83,9 @@ _dev:
 	make xdg-config
 	#make opencv
 	# --
-	emerge -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
 
 _primo: _dev _desktop
 _logilo: _dev _desktop
@@ -147,6 +151,8 @@ _honeybadger:
 	make wgetpaste
 	# --
 	make megacli
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
 
 _prefix:
 	make portage-sqlite
@@ -219,4 +225,6 @@ _prefix:
 	#make xdg-config
 	#make opencv
 	# --
-	emerge -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
