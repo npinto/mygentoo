@@ -58,7 +58,7 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
-portage-sqlite: portage-dirs
+install/portage-sqlite: install/portage-dirs
 	# -- portage sql cache
 	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
@@ -73,6 +73,8 @@ ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.con
 	make eix
 	#cp -vf ${EPREFIX}/etc/make.conf ${EPREFIX}/etc/make.conf.portage-sqlite
 endif
+	touch $@
+portage-sqlite: install/portage-sqlite
 
 eix: portage-dirs layman
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
