@@ -76,12 +76,14 @@ endif
 	touch $@
 portage-sqlite: install/portage-sqlite
 
-eix: portage-dirs layman
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/eix: install/portage-dirs install/layman
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	cp -f {files,${EPREFIX}}/etc/eixrc
 	eix-sync -q
+	touch $@
+eix: install/eix
 
 install/layman:
 	${EMERGE} -uN -q -j app-portage/layman
