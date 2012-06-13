@@ -395,9 +395,10 @@ install/atlas: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
-	${EMERGE} -uN sci-libs/blas-atlas sci-libs/lapack-atlas
+	${EMERGE} -uN virtual/blas sci-libs/blas-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
+	${EMERGE} -uN virtual/lapack sci-libs/lapack-atlas
 	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
 	touch $@
 atlas: install/atlas
