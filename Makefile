@@ -149,9 +149,12 @@ bind:
 	${EMERGE} -uN -q -j net-dns/bind
 
 # -- Shell tools
-parallel: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/parallel: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j sys-process/parallel
+	touch $@
+parallel: install/parallel
 
 wgetpaste:
 	cp -f {files,${EPREFIX}}/etc/wgetpaste.conf
