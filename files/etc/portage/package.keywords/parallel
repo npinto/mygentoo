@@ -1,4 +1,5 @@
 sys-process/parallel **
+<=dev-lang/perl-5.12.4-r1 **
 virtual/perl-Data-Dumper **
 perl-core/Data-Dumper **
 dev-perl/Devel-Size **
