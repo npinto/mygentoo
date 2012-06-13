@@ -151,7 +151,7 @@ _honeybadger:
 _prefix:
 	make portage-sqlite
 	make eix
-	make locale
+	#make locale
 	make layman
 	#make gcc
 	make fabric
