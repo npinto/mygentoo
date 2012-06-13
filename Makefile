@@ -64,14 +64,14 @@ portage-sqlite: portage-dirs
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-ifeq ($(shell if grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf.bak; then echo true; fi), 'true')
+ifeq ($(shell if grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf.portage-sqlite; then echo true; fi), 'true')
 	${EMERGE} -uN -q -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
 	rm -rf ${EPREFIX}/var/cache/edb/dep
 	${EMERGE} --metadata
 	make eix
-	cp -vf ${EPREFIX}/etc/make.conf{,.bak}
+	cp -vf ${EPREFIX}/etc/make.conf{,.portage-sqlite}
 endif
 
 eix: portage-dirs layman
