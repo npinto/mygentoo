@@ -1,3 +1,4 @@
 dev-db/mongodb **
 app-arch/snappy **
 app-admin/eselect-boost **
+=dev-lang/v8-3.9.24.28 **

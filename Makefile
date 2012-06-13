@@ -1,4 +1,4 @@
-default: help
+_default: help
 
 include init.mk
 include machines.mk
@@ -10,7 +10,7 @@ help: _list
 _list:
 	@echo Available targets:
 	@echo ------------------
-	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
+	@./make-list-targets.sh -f Makefile | grep -v '_.*' | grep -v 'install\/' | cut -d':' -f1
 
 clean:
 	rm -vrf install/*
@@ -95,12 +95,11 @@ install/_overlay: install/layman
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
-	touch $@
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
 install/overlay-sekyfsr: install/_overlay
+	touch $@
 overlay-sekyfsr: install/overlay-sekyfsr
-
 
 # -- System
 locale:
@@ -151,9 +150,13 @@ wgetpaste:
 	${EMERGE} -uN -q -j app-text/wgetpaste
 
 # -- Editors
-vim: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/vim
+install/vim: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	FEATURES=-collision-protect ${EMERGE} -uN -q -j --oneshot app-admin/eselect-ruby
 	${EMERGE} -uN -q -j app-editors/vim
+	touch $@
+vim: install/vim
 
 gvim: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/gvim
@@ -280,9 +283,11 @@ install/cython: install/portage-dirs
 	touch $@
 cython: install/cython
 
-pep8: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pep8
+install/pep8: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pep8
+	touch $@
+pep8: install/pep8
 
 autopep8: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
@@ -310,11 +315,13 @@ install/matplotlib: install/portage-dirs install/scipy
 	touch $@
 matplotlib: install/matplotlib
 
-numexpr: portage-dirs mkl
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/numexpr
+install/numexpr: install/portage-dirs install/mkl
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j --onlydeps dev-python/numexpr
 	FEATURES=test ${EMERGE} -uN dev-python/numexpr
+	touch $@
+numexpr: install/numexpr
 
 joblib: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
@@ -343,9 +350,11 @@ pytables: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
 	${EMERGE} -uN -q -j dev-python/pytables
 
-pymongo: portage-dirs mongodb
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
+install/pymongo: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pymongo
+	touch $@
+pymongo: install/pymongo
 
 install/pyqt4: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -403,29 +412,37 @@ install/tbb: install/portage-dirs
 	touch $@
 tbb: install/tbb
 
-mkl: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mkl
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/mkl
+install/mkl: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j sci-libs/mkl
+	touch $@
+mkl: install/mkl
 
 shogun: portage-dirs layman overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j sci-libs/shogun
 
-boost:
-	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
+install/boost: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j dev-libs/boost dev-util/boost-build
+	touch $@
+boost: install/boost
 
-hdf5:
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/hdf5: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sci-libs/hdf5
+	touch $@
+hdf5: install/hdf5
 
 # -- Database
-mongodb: portage-dirs boost
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/mongodb: install/portage-dirs install/boost
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-db/mongodb
+	touch $@
+mongodb: install/mongodb
 
 # -- Image / Video
 jpeg:
