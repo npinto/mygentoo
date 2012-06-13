@@ -1,3 +1,10 @@
 dev-python/matplotlib cairo excel fltk gtk latex qt4 tk wxwidgets
 x11-libs/fltk opengl
 x11-libs/wxGTK tiff X
+x11-libs/gtk+ X
+x11-libs/pango X
+dev-python/PyQt4 X
+dev-libs/libxml2 python
+x11-libs/cairo X
+media-libs/gd jpeg png
+dev-lang/python tk

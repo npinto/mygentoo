@@ -3,12 +3,17 @@ default: help
 include init.mk
 include machines.mk
 
+me=$(subst install/,,$@)
+
 help: _list
 
 _list:
 	@echo Available targets:
 	@echo ------------------
 	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
+
+clean:
+	rm -vrf install/*
 
 update:
 ifeq (${NO_EIX_SYNC},)
@@ -32,7 +37,7 @@ endif
 	dispatch-conf
 
 # -- Portage
-portage-dirs:
+install/portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.use
 	@mkdir -p ${EPREFIX}/etc/portage/package.keywords
 	@mkdir -p ${EPREFIX}/etc/portage/package.mask
@@ -40,6 +45,8 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.license
 	@mkdir -p ${EPREFIX}/etc/portage/package.env
 	@mkdir -p ${EPREFIX}/etc/portage/env
+	@touch $@
+portage-dirs: install/portage-dirs
 
 autounmask: portage-dirs
 	@touch ${EPREFIX}/etc/portage/package.use/z_autounmask
@@ -267,19 +274,26 @@ autopep8: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
 	${EMERGE} -uN -q -j dev-python/autopep8
 
-numpy: portage-dirs atlas
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/numpy: install/portage-dirs install/atlas
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-python/numpy
+	touch $@
+numpy: install/numpy
 
-scipy: portage-dirs numpy atlas
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/scipy: install/portage-dirs install/numpy install/atlas
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sci-libs/scipy
+	touch $@
+scipy: install/scipy
 
-matplotlib: portage-dirs scipy
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/matplotlib: install/portage-dirs install/scipy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-python/matplotlib
+	touch $@
+matplotlib: install/matplotlib
 
 numexpr: portage-dirs mkl
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
@@ -341,16 +355,18 @@ cgkit: portage-dirs
 	${EMERGE} -uN -q -j dev-python/cgkit
 
 # -- Scientific Libraries
-atlas: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
+install/atlas: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
 	${EMERGE} -uN sci-libs/blas-atlas sci-libs/lapack-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
 	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
+	touch $@
+atlas: install/atlas
 
 icc: portage-dirs overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
