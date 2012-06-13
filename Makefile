@@ -81,21 +81,26 @@ eix: portage-dirs layman
 	cp -f {files,${EPREFIX}}/etc/eixrc
 	eix-sync -q
 
-layman:
+install/layman:
 	${EMERGE} -uN -q -j app-portage/layman
 	touch ${EPREFIX}/var/lib/layman/make.conf
 	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
 		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
+	touch $@
+layman: install/layman
 
-_overlay:
+install/_overlay: install/layman
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
+	touch $@
 
-overlay-sekyfsr: OVERLAY=sekyfsr
-overlay-sekyfsr: _overlay
+install/overlay-sekyfsr: OVERLAY=sekyfsr
+install/overlay-sekyfsr: install/_overlay
+overlay-sekyfsr: install/overlay-sekyfsr
+
 
 # -- System
 locale:
@@ -244,27 +249,36 @@ setuptools: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
 	${EMERGE} -uN -q -j dev-python/setuptools
 
-virtualenv: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
+install/virtualenv: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/virtualenv
+	touch $@
+virtualenv: install/virtualenv
 
-virtualenvwrapper: portage-dirs virtualenv overlay-sekyfsr
+install/virtualenvwrapper: install/portage-dirs install/virtualenv install/overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
 	USE_PYTHON='2.7' ${EMERGE} -uN -q -j dev-python/virtualenvwrapper
+	touch $@
+virtualenvwrapper: install/virtualenvwrapper
 
-ipython: portage-dirs pyqt4
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/ipython
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/ipython
+install/ipython: install/portage-dirs install/pyqt4
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/ipython
+ipython: install/ipython
 
-ipdb: portage-dirs ipython
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
+install/ipdb: install/portage-dirs install/ipython
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/ipdb
+	touch $@
+ipdb: install/ipdb
 
-cython: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/cython: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-python/cython
+	touch $@
+cython: install/cython
 
 pep8: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pep8
@@ -291,6 +305,7 @@ scipy: install/scipy
 install/matplotlib: install/portage-dirs install/scipy
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j dev-python/matplotlib
 	touch $@
 matplotlib: install/matplotlib
@@ -305,18 +320,24 @@ joblib: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	${EMERGE} -uN -q -j dev-python/joblib
 
-scikits.learn: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/scikits.learn: install/portage-dirs install/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j sci-libs/scikits_learn
+	touch $@
+scikits.learn: install/scikits.learn
 
-scikits.image: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/scikits.image: install/portage-dirs install/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pyfits
 	${EMERGE} -uN -q -j sci-libs/scikits_image
+	touch $@
+scikits.image: install/scikits.image
 
-Theano: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/Theano: install/portage-dirs install/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j sci-libs/Theano
+	touch $@
+Theano: install/Theano
 
 pytables: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
@@ -326,10 +347,12 @@ pymongo: portage-dirs mongodb
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
 	${EMERGE} -uN -q -j dev-python/pymongo
 
-pyqt4: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/pyqt4: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-python/PyQt4
+	touch $@
+pyqt4: install/pyqt4
 
 pycuda: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
@@ -374,9 +397,11 @@ icc: portage-dirs overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/icc
 	${EMERGE} -uN dev-lang/icc
 
-tbb: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/tbb
+install/tbb: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-cpp/tbb
+	touch $@
+tbb: install/tbb
 
 mkl: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mkl
