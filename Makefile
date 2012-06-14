@@ -490,6 +490,7 @@ opencv: install/opencv
 
 install/freeimage: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j media-libs/freeimage
 	touch $@
 freeimage: install/freeimage
