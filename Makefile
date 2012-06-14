@@ -106,12 +106,14 @@ install/overlay-sekyfsr: install/_overlay
 overlay-sekyfsr: install/overlay-sekyfsr
 
 # -- System
-locale:
+install/locale:
 	cp -f {files,${EPREFIX}}/etc/locale.gen
 	cp -f {files,${EPREFIX}}/etc/env.d/02locale
 	locale-gen -u
 	locale
 	env-update && source /etc/profile
+	touch $@
+locale: install/locale
 
 #gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 install/gcc: install/portage-dirs
@@ -472,31 +474,41 @@ install/mongodb: install/portage-dirs install/boost
 mongodb: install/mongodb
 
 # -- Image / Video
-jpeg:
+install/jpeg:
 	${EMERGE} --deselect media-libs/jpeg
 	${EMERGE} -uN -q -j media-libs/libjpeg-turbo
+	touch $@
+jpeg: install/jpeg
 
-opencv: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+install/opencv: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j media-libs/opencv
+	touch $@
+opencv: install/opencv
 
-freeimage: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/freeimage: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j media-libs/freeimage
+	touch $@
+freeimage: install/freeimage
 
-imagemagick: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/imagemagick: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j media-gfx/imagemagick
+	touch $@
+imagemagick: install/imagemagick
 
-mplayer: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/mplayer: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j media-video/mplayer
+	touch $@
+mplayer: install/mplayer
 
 # -- Misc
-fonts:
+install/fonts:
 	${EMERGE} -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
 	${EMERGE} -uN -q -j terminus-font intlfonts freefonts corefonts
@@ -505,46 +517,62 @@ fonts:
 	eselect fontconfig list | grep dejavu
 	fc-match | grep DejaVuSans || exit 1
 	fc-match "Monospace" | grep DejaVuSansMono || exit 1
+	touch $@
+fonts: install/fonts
 
-dropbox: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/dropbox: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j net-misc/dropbox
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
+	touch $@
+dropbox: install/dropbox
 
-texlive: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/texlive: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j app-text/texlive
 	#${EMERGE} -uN -q -j app-text/texlive-core
+	touch $@
+texlive: install/texlive
 
-cairo: portage-dirs
+install/cairo: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	${EMERGE} -uN -q -j x11-libs/cairo
+	touch $@
+cairo: install/cairo
 
-ntfs3g: portage-dirs
+install/ntfs3g: install/portage-dirs
 	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
+	touch $@
+ntfs3g: install/ntfs3g
 
-valgrind: portage-dirs
+install/valgrind: install/portage-dirs
 	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf \
 		|| echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
 ifeq ($(shell if test -d /usr/lib/debug/usr/lib64/misc/glibc; then echo true; else echo false; fi), false)
 	${EMERGE} -q sys-libs/glibc
 endif
 	${EMERGE} -uN -q -j dev-util/valgrind
+	touch $@
+valgrind: install/valgrind
 
-megacli: portage-dirs
+install/megacli: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	${EMERGE} -uN -q -j sys-block/megacli
+	touch $@
+megacli: install/megacli
 
 # -- X
-xorg-server: portage-dirs
+install/xorg-server: install/portage-dirs
 	${EMERGE} -uN -q -j x11-base/xorg-server
+	touch $@
+xorg-server: install/xorg-server
 
-nvidia-drivers: portage-dirs gcc xorg-server
+install/nvidia-drivers: install/portage-dirs install/gcc install/xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j x11-drivers/nvidia-drivers
@@ -552,19 +580,23 @@ nvidia-drivers: portage-dirs gcc xorg-server
 	${EMERGE} -uN -q -j app-admin/eselect-opencl
 	eselect opencl set nvidia
 
-nvidia-settings: portage-dirs
+install/nvidia-settings: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j media-video/nvidia-settings
+	touch $@
+nvidia-settings: install/nvidia-settings
 
 # -- OpenCL
-opencl: portage-dirs
+install/opencl: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	${EMERGE} -uN -q -j virtual/opencl
+	touch $@
+opencl: install/opencl
 
 # -- CUDA
-cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
+install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
@@ -572,12 +604,16 @@ cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
 	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
+	touch $@
+cuda: install/cuda
 
 # -- Java
 ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 	wget http://dl.dropbox.com/u/167753/fuck-oracle/jdk-6u31-linux-x64.bin
 	mv -vf jdk-6u31-linux-x64.bin $@
 
-sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j dev-java/sun-jdk
+	touch $@
+sun-jdl: install/sun-jdk
