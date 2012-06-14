@@ -309,9 +309,11 @@ install/pep8: install/portage-dirs
 	touch $@
 pep8: install/pep8
 
-autopep8: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
+install/autopep8: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/autopep8
+	touch $@
+autopep8: install/autopep8
 
 install/numpy: install/portage-dirs install/atlas
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
