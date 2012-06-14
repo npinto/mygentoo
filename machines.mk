@@ -203,7 +203,7 @@ _prefix:
 	#make shogun
 	# --
 	make jpeg
-	make freeimage
+	#make freeimage
 	make imagemagick
 	#make gthumb
 	#make mplayer
