@@ -539,14 +539,14 @@ install/texlive: install/portage-dirs
 texlive: install/texlive
 
 install/cairo: install/portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j x11-libs/cairo
 	touch $@
 cairo: install/cairo
 
 install/ntfs3g: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
 	touch $@
 ntfs3g: install/ntfs3g
@@ -562,7 +562,7 @@ endif
 valgrind: install/valgrind
 
 install/megacli: install/portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j sys-block/megacli
 	touch $@
 megacli: install/megacli
@@ -574,24 +574,24 @@ install/xorg-server: install/portage-dirs
 xorg-server: install/xorg-server
 
 install/nvidia-drivers: install/portage-dirs install/gcc install/xorg-server
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j x11-drivers/nvidia-drivers
 	eselect opengl set nvidia
 	${EMERGE} -uN -q -j app-admin/eselect-opencl
 	eselect opencl set nvidia
 
 install/nvidia-settings: install/portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j media-video/nvidia-settings
 	touch $@
 nvidia-settings: install/nvidia-settings
 
 # -- OpenCL
 install/opencl: install/portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j virtual/opencl
 	touch $@
 opencl: install/opencl
