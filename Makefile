@@ -159,9 +159,11 @@ install/parallel: install/portage-dirs
 	touch $@
 parallel: install/parallel
 
-wgetpaste:
+install/wgetpaste:
 	cp -f {files,${EPREFIX}}/etc/wgetpaste.conf
 	${EMERGE} -uN -q -j app-text/wgetpaste
+	touch $@
+wgetpaste: install/wgetpaste
 
 # -- Editors
 install/vim: install/portage-dirs
