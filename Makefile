@@ -529,6 +529,7 @@ fonts: install/fonts
 install/dropbox: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j net-misc/dropbox
+	${EMERGE} -uN -q -j net-misc/dropbox-cli
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
