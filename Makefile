@@ -552,6 +552,7 @@ cairo: install/cairo
 install/ntfs3g: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
 	touch $@
 ntfs3g: install/ntfs3g
@@ -585,6 +586,8 @@ install/nvidia-drivers: install/portage-dirs install/gcc install/xorg-server
 	eselect opengl set nvidia
 	${EMERGE} -uN -q -j app-admin/eselect-opencl
 	eselect opencl set nvidia
+	touch $@
+nvidia-drivers: install/nvidia-drivers
 
 install/nvidia-settings: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
@@ -622,4 +625,4 @@ install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j dev-java/sun-jdk
 	touch $@
-sun-jdl: install/sun-jdk
+sun-jdk: install/sun-jdk
