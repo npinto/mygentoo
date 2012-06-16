@@ -1,5 +1,11 @@
+include init.mk
+
 me:
+ifeq ($(strip ${EPREFIX}), )
 	make _$(shell hostname)
+else
+	make _prefix
+endif
 
 _desktop:
 	make awesome
@@ -77,7 +83,9 @@ _dev:
 	make xdg-config
 	#make opencv
 	# --
-	emerge -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
 
 _primo: _dev _desktop
 _logilo: _dev _desktop
@@ -101,7 +109,8 @@ _honeybadger:
 	make virtualenv virtualenvwrapper
 	# --
 	make atlas
-	make numpy scipy matplotlib
+	make numpy scipy
+	make matplotlib
 	make cython
 	make pep8 autopep8
 	make joblib
@@ -143,3 +152,81 @@ _honeybadger:
 	make wgetpaste
 	# --
 	make megacli
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
+
+_prefix:
+	make portage-sqlite
+	make eix
+	#make locale
+	make layman
+	#make gcc
+	make fabric
+	make parallel
+	# --
+	make vim
+	# --
+	make python
+	make setuptools
+	make pip
+	make ipython ipdb
+	make virtualenv virtualenvwrapper
+	# --
+	make atlas
+	make numpy scipy
+	#make matplotlib
+	make cython
+	make pep8 autopep8
+	make joblib
+	make cairo
+	#make cgkit
+	#make numexpr
+	make scikits.image
+	make scikits.learn
+	make Theano
+	make simplejson
+	# --
+	#make nvidia-drivers
+	#make nvidia-settings
+	#make cuda
+	#make pycuda
+	#make opencl
+	#make pyopencl
+	# --
+	make pyqt4
+	make pytables
+	# --
+	#make mkl
+	#make icc
+	#make valgrind
+	#make tbb
+	#make shogun
+	# --
+	make jpeg
+	#make freeimage
+	make imagemagick
+	#make gthumb
+	#make mplayer
+	#make opencv
+	# --
+	#make mongodb
+	make pymongo
+	# --
+	#make texlive
+	make wgetpaste
+	# --
+	#make megacli
+	#make sun-jdk
+	#make tbb
+	#make terminator
+	#make texlive
+	#make valgrind
+	#make vim
+	#make wgetpaste
+	#make xdg
+	#make xdg-config
+	#make opencv
+	# --
+	${EMERGE} -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux

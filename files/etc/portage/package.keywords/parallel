@@ -1,4 +1,4 @@
-sys-process/parallel ~amd64
-virtual/perl-Data-Dumper ~amd64
-perl-core/Data-Dumper ~amd64
-dev-perl/Devel-Size ~amd64
+sys-process/parallel **
+virtual/perl-Data-Dumper **
+perl-core/Data-Dumper **
+dev-perl/Devel-Size **

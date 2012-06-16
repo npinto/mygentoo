@@ -58,28 +58,32 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
-portage-sqlite: portage-dirs
+install/portage-sqlite: install/portage-dirs
 	# -- portage sql cache
 	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-	grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf \
-		|| ( \
-		${EMERGE} -uN -q -j dev-python/pysqlite \
-		&& cp -f {files,${EPREFIX}}/etc/portage/modules \
-		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf \
-		&& rm -rf ${EPREFIX}/var/cache/edb/dep \
-		&& ${EMERGE} --metadata \
-		&& make eix \
-		)
+ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf && echo true), 'true')
+	${EMERGE} -uN -q -j dev-python/pysqlite
+	cp -f {files,${EPREFIX}}/etc/portage/modules
+	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
+	rm -rf ${EPREFIX}/var/cache/edb/dep
+	${EMERGE} --metadata
+	make eix
+	#cp -vf ${EPREFIX}/etc/make.conf ${EPREFIX}/etc/make.conf.portage-sqlite
+endif
+	touch $@
+portage-sqlite: install/portage-sqlite
 
-eix: portage-dirs layman
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/eix: install/portage-dirs install/layman
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	cp -f {files,${EPREFIX}}/etc/eixrc
 	eix-sync -q
+	touch $@
+eix: install/eix
 
 install/layman:
 	${EMERGE} -uN -q -j app-portage/layman
@@ -97,17 +101,20 @@ install/_overlay: install/layman
 	egencache --repo=${OVERLAY} --update
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
-install/overlay-sekyfsr: install/_overlay
+install/overlay-sekyfsr:
+	make install/_overlay
 	touch $@
 overlay-sekyfsr: install/overlay-sekyfsr
 
 # -- System
-locale:
+install/locale:
 	cp -f {files,${EPREFIX}}/etc/locale.gen
 	cp -f {files,${EPREFIX}}/etc/env.d/02locale
 	locale-gen -u
 	locale
 	env-update && source /etc/profile
+	touch $@
+locale: install/locale
 
 #gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
 install/gcc: install/portage-dirs
@@ -115,6 +122,8 @@ install/gcc: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.env/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/env/simple-cflags
+	${EMERGE} -uN -q '=sys-devel/gcc-4.2.4-r1'
+ifeq ($(strip ${EPREFIX}), )
 	# -- gcc-4.5 (default)
 	gcc-config -l | grep "x86_64-pc-linux-gnu-4.5.3 \*" &> /dev/null \
 		|| \
@@ -125,10 +134,10 @@ install/gcc: install/portage-dirs
 		&& ${EMERGE} --oneshot -q libtool)
 	#${EMERGE} -uN -q '=sys-devel/gcc-3.4.6-r2'
 	#${EMERGE} -uN -q '=sys-devel/gcc-4.1.2'
-	${EMERGE} -uN -q '=sys-devel/gcc-4.2.4-r1'
 	${EMERGE} -uN -q '=sys-devel/gcc-4.3.6-r1'
 	${EMERGE} -uN -q "=sys-devel/gcc-4.4.7"
 	${EMERGE} -uN -q "=sys-devel/gcc-4.6*"
+endif
 	touch $@
 gcc: install/gcc
 
@@ -143,13 +152,18 @@ bind:
 	${EMERGE} -uN -q -j net-dns/bind
 
 # -- Shell tools
-parallel: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/parallel: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j sys-process/parallel
+	touch $@
+parallel: install/parallel
 
-wgetpaste:
+install/wgetpaste:
 	cp -f {files,${EPREFIX}}/etc/wgetpaste.conf
 	${EMERGE} -uN -q -j app-text/wgetpaste
+	touch $@
+wgetpaste: install/wgetpaste
 
 # -- Editors
 install/vim: install/portage-dirs
@@ -221,8 +235,8 @@ adobe-flash: portage-dirs
 	${EMERGE} -uN -q -j www-plugins/adobe-flash
 
 # -- Python
-python: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/python: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-lang/python
 	eselect python set python2.7
 ifneq ($(shell eselect python list | grep python | wc -l), 1)
@@ -244,15 +258,21 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
 endif
+	touch $@
+python: install/python
 
-pip: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pip
+install/pip: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pip
+	touch $@
+pip: install/pip
 
-setuptools: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
+install/setuptools: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/setuptools
+	touch $@
+setuptools: install/setuptools
 
 install/virtualenv: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -270,6 +290,7 @@ install/ipython: install/portage-dirs install/pyqt4
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/ipython
+	touch $@
 ipython: install/ipython
 
 install/ipdb: install/portage-dirs install/ipython
@@ -327,9 +348,11 @@ install/numexpr: install/portage-dirs install/mkl
 	touch $@
 numexpr: install/numexpr
 
-joblib: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/joblib: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/joblib
+	touch $@
+joblib: install/joblib
 
 install/scikits.learn: install/portage-dirs install/numpy
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -350,9 +373,11 @@ install/Theano: install/portage-dirs install/numpy
 	touch $@
 Theano: install/Theano
 
-pytables: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
+install/pytables: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pytables
+	touch $@
+pytables: install/pytables
 
 install/pymongo: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -377,13 +402,17 @@ pyopencl: portage-dirs opencl
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j dev-python/pyopencl
 
-simplejson: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/simplejson: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/simplejson
+	touch $@
+simplejson: install/simplejson
 
-fabric: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/fabric: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/fabric
+	touch $@
+fabric: install/fabric
 
 cgkit: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
@@ -397,9 +426,10 @@ install/atlas: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
-	${EMERGE} -uN sci-libs/blas-atlas sci-libs/lapack-atlas
+	${EMERGE} -uN virtual/blas sci-libs/blas-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
+	${EMERGE} -uN virtual/lapack sci-libs/lapack-atlas
 	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
 	touch $@
 atlas: install/atlas
@@ -449,28 +479,39 @@ install/mongodb: install/portage-dirs install/boost
 mongodb: install/mongodb
 
 # -- Image / Video
-jpeg:
+install/jpeg:
 	${EMERGE} --deselect media-libs/jpeg
 	${EMERGE} -uN -q -j media-libs/libjpeg-turbo
+	touch $@
+jpeg: install/jpeg
 
-opencv: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+install/opencv: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j media-libs/opencv
+	touch $@
+opencv: install/opencv
 
-freeimage: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/freeimage: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j media-libs/freeimage
+	touch $@
+freeimage: install/freeimage
 
-imagemagick: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/imagemagick: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j media-gfx/imagemagick
+	touch $@
+imagemagick: install/imagemagick
 
-mplayer: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/mplayer: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j media-video/mplayer
+	touch $@
+mplayer: install/mplayer
 
 # -- Misc
 install/fonts:
@@ -488,6 +529,7 @@ fonts: install/fonts
 install/dropbox: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j net-misc/dropbox
+	${EMERGE} -uN -q -j net-misc/dropbox-cli
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
@@ -509,6 +551,7 @@ install/cairo: install/portage-dirs
 cairo: install/cairo
 
 install/ntfs3g: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
@@ -532,7 +575,7 @@ install/megacli: install/portage-dirs
 megacli: install/megacli
 
 # -- X
-install/xorg-server:
+install/xorg-server: install/portage-dirs
 	${EMERGE} -uN -q -j x11-base/xorg-server
 	touch $@
 xorg-server: install/xorg-server
@@ -563,7 +606,7 @@ install/opencl: install/portage-dirs
 opencl: install/opencl
 
 # -- CUDA
-cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
+install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
@@ -571,12 +614,16 @@ cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
 	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
+	touch $@
+cuda: install/cuda
 
 # -- Java
 ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
 	wget http://dl.dropbox.com/u/167753/fuck-oracle/jdk-6u31-linux-x64.bin
 	mv -vf jdk-6u31-linux-x64.bin $@
 
-sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j dev-java/sun-jdk
+	touch $@
+sun-jdl: install/sun-jdk
