@@ -101,8 +101,7 @@ install/_overlay: install/layman
 	egencache --repo=${OVERLAY} --update
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
-install/overlay-sekyfsr:
-	make install/_overlay
+install/overlay-sekyfsr: install/_overlay
 	touch $@
 overlay-sekyfsr: install/overlay-sekyfsr
 
