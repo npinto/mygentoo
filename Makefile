@@ -291,9 +291,11 @@ install/pep8: install/portage-dirs
 	touch $@
 pep8: install/pep8
 
-autopep8: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
+install/autopep8: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/autopep8
+	touch $@
+autopep8: install/autopep8
 
 install/numpy: install/portage-dirs install/atlas
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -471,7 +473,7 @@ mplayer: portage-dirs
 	${EMERGE} -uN -q -j media-video/mplayer
 
 # -- Misc
-fonts:
+install/fonts:
 	${EMERGE} -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
 	${EMERGE} -uN -q -j terminus-font intlfonts freefonts corefonts
@@ -480,63 +482,85 @@ fonts:
 	eselect fontconfig list | grep dejavu
 	fc-match | grep DejaVuSans || exit 1
 	fc-match "Monospace" | grep DejaVuSansMono || exit 1
+	touch $@
+fonts: install/fonts
 
-dropbox: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/dropbox: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j net-misc/dropbox
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
+	touch $@
+dropbox: install/dropbox
 
-texlive: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/texlive: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j app-text/texlive
 	#${EMERGE} -uN -q -j app-text/texlive-core
+	touch $@
+texlive: install/texlive
 
-cairo: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/cairo: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j x11-libs/cairo
+	touch $@
+cairo: install/cairo
 
-ntfs3g: portage-dirs
+install/ntfs3g: install/portage-dirs
 	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
+	touch $@
+ntfs3g: install/ntfs3g
 
-valgrind: portage-dirs
+install/valgrind: install/portage-dirs
 	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf \
 		|| echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
 ifeq ($(shell if test -d /usr/lib/debug/usr/lib64/misc/glibc; then echo true; else echo false; fi), false)
 	${EMERGE} -q sys-libs/glibc
 endif
 	${EMERGE} -uN -q -j dev-util/valgrind
+	touch $@
+valgrind: install/valgrind
 
-megacli: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+install/megacli: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j sys-block/megacli
+	touch $@
+megacli: install/megacli
 
 # -- X
-xorg-server: portage-dirs
+install/xorg-server:
 	${EMERGE} -uN -q -j x11-base/xorg-server
+	touch $@
+xorg-server: install/xorg-server
 
-nvidia-drivers: portage-dirs gcc xorg-server
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/nvidia-drivers: install/portage-dirs install/gcc install/xorg-server
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j x11-drivers/nvidia-drivers
 	eselect opengl set nvidia
 	${EMERGE} -uN -q -j app-admin/eselect-opencl
 	eselect opencl set nvidia
+	touch $@
+nvidia-drivers: install/nvidia-drivers
 
-nvidia-settings: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/nvidia-settings: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j media-video/nvidia-settings
+	touch $@
+nvidia-settings: install/nvidia-settings
 
 # -- OpenCL
-opencl: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
+install/opencl: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j virtual/opencl
+	touch $@
+opencl: install/opencl
 
 # -- CUDA
 cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
