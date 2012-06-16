@@ -626,4 +626,4 @@ install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j dev-java/sun-jdk
 	touch $@
-sun-jdl: install/sun-jdk
+sun-jdk: install/sun-jdk
