@@ -1,3 +1,4 @@
 media-gfx/imagemagick bzip2 djvu fftw graphviz gs hdri jbig jpeg jpeg2k lcms lqr lzma openexr openmp pango perl png q32 q64 q8 raw svg tiff truetype webp wmf xml zlib
 #X autotrace bzip2 (+)corefonts cxx djvu fftw fontconfig fpx graphviz gs hdri jbig jpeg jpeg2k lcms lqr lzma opencl openexr openmp pango perl png q32 q64 q8 raw static-libs svg tiff truetype webp wmf xml zlib
 media-libs/gd truetype fontconfig jpeg png
+x11-libs/cairo X
