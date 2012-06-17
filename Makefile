@@ -311,7 +311,7 @@ install/cython: install/portage-dirs
 	touch $@
 cython: install/cython
 
-install/pep8: install/portage-dirs
+install/pep8: install/portage-dirs install/autopep8
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pep8
 	touch $@
