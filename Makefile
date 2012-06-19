@@ -513,7 +513,7 @@ install/imagemagick: install/portage-dirs
 	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
 	# lensfun workaround
 	ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge &> /dev/null \
-		|| ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge
+		|| FEATURES=-collision-protect ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge
 	${EMERGE} -uN -q -j media-gfx/imagemagick
 	touch $@
 imagemagick: install/imagemagick
