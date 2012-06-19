@@ -502,6 +502,7 @@ freeimage: install/freeimage
 install/imagemagick: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j '=media-libs/openexr-1.6.1'
 	${EMERGE} -uN -q -j media-gfx/imagemagick
 	touch $@
 imagemagick: install/imagemagick
