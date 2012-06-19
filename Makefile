@@ -285,7 +285,7 @@ install/virtualenv: install/portage-dirs
 	touch $@
 virtualenv: install/virtualenv
 
-install/virtualenvwrapper: install/portage-dirs install/virtualenv install/overlay-sekyfsr
+install/virtualenvwrapper: install/portage-dirs install/virtualenv
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
 	USE_PYTHON='2.7' ${EMERGE} -uN -q -j dev-python/virtualenvwrapper
 	touch $@
