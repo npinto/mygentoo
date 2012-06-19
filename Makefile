@@ -184,18 +184,24 @@ gdm: portage-dirs xorg-server
 	${EMERGE} -uN -q -j gnome-base/gdm
 	rc-update add xdm default
 
-feh: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/feh: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j media-gfx/feh
+	touch $@
+feh: install/feh
 
-awesome: portage-dirs xorg-server feh
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/awesome: install/portage-dirs install/xorg-server install/feh
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
 	${EMERGE} -uN -q -j x11-wm/awesome
 	make fonts
+	touch $@
+awesome: install/awesome
 
-xdg:
+install/xdg:
 	command -v xdg-mime &> /dev/null || ${EMERGE} -uN -q -j x11-misc/xdg-utils
+	touch $@
+xdg: install/xdg
 
 xdg-config: xdg evince nautilus
 	mkdir -p ${HOME}/.local/share/applications/
@@ -618,11 +624,17 @@ install/cuda: install/portage-dirs install/layman install/nvidia-drivers install
 cuda: install/cuda
 
 # -- Java
-${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
-	wget http://dl.dropbox.com/u/167753/fuck-oracle/jdk-6u31-linux-x64.bin
-	mv -vf jdk-6u31-linux-x64.bin $@
+me_nodistfiles=$(subst ${EPREFIX}/usr/portage/distfiles/,,$@)
+${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin:
+	wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+	mv -vf ${me_nodistfiles} $@
 
-install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
+${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz:
+	wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+	mv -vf ${me_nodistfiles} $@
+
+install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin \
+	${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j dev-java/sun-jdk
 	touch $@
