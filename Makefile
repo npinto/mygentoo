@@ -512,6 +512,7 @@ install/imagemagick: install/portage-dirs
 	${EMERGE} -uN -q -j '=media-libs/openexr-1.6.1'
 	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
 	# lensfun workaround
+	${EMERGE} -uN -q --deps-only media-libs/lensfun
 	ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge &> /dev/null \
 		|| FEATURES=-collision-protect ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge
 	${EMERGE} -uN -q -j media-gfx/imagemagick
