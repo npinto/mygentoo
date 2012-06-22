@@ -1,13 +1,19 @@
-default: help
+_default: help
 
+include init.mk
 include machines.mk
+
+me=$(subst install/,,$@)
 
 help: _list
 
 _list:
 	@echo Available targets:
 	@echo ------------------
-	@./make-list-targets.sh -f Makefile | grep -v '_.*' | cut -d':' -f1
+	@./make-list-targets.sh -f Makefile | grep -v '_.*' | grep -v 'install\/' | cut -d':' -f1
+
+clean:
+	rm -vrf install/*
 
 update:
 ifeq (${NO_EIX_SYNC},)
@@ -16,12 +22,12 @@ endif
 	glsa-check -q -t all
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
-	emerge --ask -qtuDN -q -j --with-bdeps y --keep-going world system
-	emerge --ask --depclean -q # -tv
+	${EMERGE} --ask -qtuDN -q -j --with-bdeps y --keep-going world system
+	${EMERGE} --ask --depclean -q # -tv
 	revdep-rebuild -q -i -- --ask
 else
-	emerge -qtuDN -q -j --with-bdeps y --keep-going world system
-	emerge --depclean -q #-tv
+	${EMERGE} -qtuDN -q -j --with-bdeps y --keep-going world system
+	${EMERGE} --depclean -q #-tv
 	revdep-rebuild -q -i
 endif
 	eclean-dist -d
@@ -31,7 +37,7 @@ endif
 	dispatch-conf
 
 # -- Portage
-portage-dirs:
+install/portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.use
 	@mkdir -p ${EPREFIX}/etc/portage/package.keywords
 	@mkdir -p ${EPREFIX}/etc/portage/package.mask
@@ -39,6 +45,8 @@ portage-dirs:
 	@mkdir -p ${EPREFIX}/etc/portage/package.license
 	@mkdir -p ${EPREFIX}/etc/portage/package.env
 	@mkdir -p ${EPREFIX}/etc/portage/env
+	@touch $@
+portage-dirs: install/portage-dirs
 
 autounmask: portage-dirs
 	@touch ${EPREFIX}/etc/portage/package.use/z_autounmask
@@ -50,64 +58,76 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
-portage-sqlite: portage-dirs
+install/portage-sqlite: install/portage-dirs
 	# -- portage sql cache
 	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-	grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf \
-		|| ( \
-		emerge -uN -q -j dev-python/pysqlite \
-		&& cp -f {files,${EPREFIX}}/etc/portage/modules \
-		&& echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf \
-		&& rm -rf /var/cache/edb/dep \
-		&& emerge --metadata \
-		&& make eix \
-		)
+ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf && echo true), 'true')
+	${EMERGE} -uN -q -j dev-python/pysqlite
+	cp -f {files,${EPREFIX}}/etc/portage/modules
+	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
+	rm -rf ${EPREFIX}/var/cache/edb/dep
+	${EMERGE} --metadata
+	make eix
+	#cp -vf ${EPREFIX}/etc/make.conf ${EPREFIX}/etc/make.conf.portage-sqlite
+endif
+	touch $@
+portage-sqlite: install/portage-sqlite
 
-eix: portage-dirs layman
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j app-portage/eix
+install/eix: install/portage-dirs install/layman
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	cp -f {files,${EPREFIX}}/etc/eixrc
 	eix-sync -q
+	touch $@
+eix: install/eix
 
-layman:
-	emerge -uN -q -j app-portage/layman
-	touch /var/lib/layman/make.conf
-	grep -e '^source.*layman.*' /etc/make.conf \
-		|| echo "source /var/lib/layman/make.conf" >> /etc/make.conf
+install/layman:
+	${EMERGE} -uN -q -j app-portage/layman
+	touch ${EPREFIX}/var/lib/layman/make.conf
+	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
+		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
+	touch $@
+layman: install/layman
 
-_overlay:
+install/_overlay: install/layman
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
 
-overlay-sekyfsr: OVERLAY=sekyfsr
-overlay-sekyfsr: _overlay
+install/overlay-sekyfsr: OVERLAY=sekyfsr
+install/overlay-sekyfsr: install/_overlay
+	touch $@
+overlay-sekyfsr: install/overlay-sekyfsr
 
 # -- System
-locale:
+install/locale:
 	cp -f {files,${EPREFIX}}/etc/locale.gen
 	cp -f {files,${EPREFIX}}/etc/env.d/02locale
 	locale-gen -u
 	locale
 	env-update && source /etc/profile
+	touch $@
+locale: install/locale
 
 #gcc: GCC_VERSION=$(shell gcc-config -C -l | grep '*$$' | cut -d' ' -f 3)
-gcc: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.env/$@
+install/gcc: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.env/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/env/simple-cflags
+	${EMERGE} -uN -q '=sys-devel/gcc-4.2.4*'
+ifeq ($(strip ${EPREFIX}), )
 	# -- gcc-4.5 (default)
 	gcc-config -l | grep "x86_64-pc-linux-gnu-4.5.3 \*" &> /dev/null \
 		|| \
 		(gcc-config -l \
-		&& emerge -uN -q '=sys-devel/gcc-4.5.3-r2' \
+		&& ${EMERGE} -uN -q '=sys-devel/gcc-4.5.3-r2' \
 		&& gcc-config x86_64-pc-linux-gnu-4.5.3 \
 		&& gcc-config -l \
 		&& emerge --oneshot -q libtool)
@@ -117,53 +137,72 @@ gcc: portage-dirs
 	emerge -uN -q '=sys-devel/gcc-4.3.6-r1'
 	emerge -uN -q "=sys-devel/gcc-4.4*"
 	emerge -uN -q "=sys-devel/gcc-4.6*"
+endif
+	touch $@
+gcc: install/gcc
 
 module-rebuild:
-	emerge -uN -q -j sys-kernel/module-rebuild
+	${EMERGE} -uN -q -j sys-kernel/module-rebuild
 	module-rebuild populate
 
 # -- Network
 bind:
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/bind
-	emerge -uN -q -j net-dns/bind
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+	${EMERGE} -uN -q -j net-dns/bind
 
 # -- Shell tools
-parallel: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j sys-process/parallel
+install/parallel: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j sys-process/parallel
+	touch $@
+parallel: install/parallel
 
-wgetpaste:
+install/wgetpaste:
 	cp -f {files,${EPREFIX}}/etc/wgetpaste.conf
-	emerge -uN -q -j app-text/wgetpaste
+	${EMERGE} -uN -q -j app-text/wgetpaste
+	touch $@
+wgetpaste: install/wgetpaste
 
 # -- Editors
-vim: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/vim
-	emerge -uN -q -j app-editors/vim
+install/vim: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	FEATURES=-collision-protect ${EMERGE} -uN -q -j --oneshot app-admin/eselect-ruby
+	${EMERGE} -uN -q -j app-editors/vim
+	touch $@
+vim: install/vim
 
 gvim: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/gvim
-	emerge -uN -q -j app-editors/gvim
+	${EMERGE} -uN -q -j app-editors/gvim
 
 # -- Desktop
 gdm: portage-dirs xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
-	emerge -uN -q -j gnome-base/gdm
+	${EMERGE} -uN -q -j gnome-base/gdm
 	rc-update add xdm default
 
-feh: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j media-gfx/feh
+install/feh: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j media-gfx/feh
+	touch $@
+feh: install/feh
 
-awesome: portage-dirs xorg-server feh
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/awesome: install/portage-dirs install/xorg-server install/feh
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/usr/share/xsessions/awesome.desktop
-	emerge -uN -q -j x11-wm/awesome
+	${EMERGE} -uN -q -j x11-wm/awesome
 	make fonts
+	touch $@
+awesome: install/awesome
 
-xdg:
-	command -v xdg-mime &> /dev/null || emerge -uN -q -j x11-misc/xdg-utils
+install/xdg:
+	command -v xdg-mime &> /dev/null || ${EMERGE} -uN -q -j x11-misc/xdg-utils
+	touch $@
+xdg: install/xdg
 
 xdg-config: xdg evince nautilus
 	mkdir -p ${HOME}/.local/share/applications/
@@ -172,39 +211,39 @@ xdg-config: xdg evince nautilus
 
 gthumb: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j media-gfx/gthumb
+	${EMERGE} -uN -q -j media-gfx/gthumb
 
 evince: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	command -v evince &> /dev/null || emerge -uN -q -j app-text/evince
+	command -v evince &> /dev/null || ${EMERGE} -uN -q -j app-text/evince
 
 nautilus: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	command -v nautilus &> /dev/null || emerge -uN -q -j gnome-base/nautilus
+	command -v nautilus &> /dev/null || ${EMERGE} -uN -q -j gnome-base/nautilus
 
 gnome-terminal: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j x11-terms/gnome-terminal
+	${EMERGE} -uN -q -j x11-terms/gnome-terminal
 	make fonts
 
 terminator: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j x11-terms/terminator
+	${EMERGE} -uN -q -j x11-terms/terminator
 	make fonts
 
 chromium: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j www-client/chromium
+	${EMERGE} -uN -q -j www-client/chromium
 
 adobe-flash: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j www-plugins/adobe-flash
+	${EMERGE} -uN -q -j www-plugins/adobe-flash
 
 # -- Python
-python: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-lang/python
+install/python: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-lang/python
 	eselect python set python2.7
 ifneq ($(shell eselect python list | grep python | wc -l), 1)
 	#python-updater -- -q -j --with-bdeps y --keep-going
@@ -212,284 +251,398 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 		-dmanual -dpylibdir -dPYTHON_ABIS -dshared_linking -dstatic_linking \
 		-- -q -j --with-bdeps y --keep-going
 #ifeq (${NO_ASK},)
-	#emerge --depclean -av -j
+	#${EMERGE} --depclean -av -j
 	#revdep-rebuild -v -- --ask -j
 #else
-	emerge -q --depclean -j
+	${EMERGE} -q --depclean -j
 	revdep-rebuild -q -- -j
 #endif
 	#eselect python list | grep 'python2.7 *' || ( \
 		#eselect python set python2.7 \
 		#&& python-updater -- -q -j --with-bdeps y --keep-going \
-		#&& emerge --depclean -av -q -j \
+		#&& ${EMERGE} --depclean -av -q -j \
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
 endif
+	touch $@
+python: install/python
 
-pip: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/pip
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pip
-	emerge -uN -q -j dev-python/pip
+install/pip: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/pip
+	touch $@
+pip: install/pip
 
-setuptools: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/setuptools
-	emerge -uN -q -j dev-python/setuptools
+install/setuptools: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/setuptools
+	touch $@
+setuptools: install/setuptools
 
-virtualenv: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenv
-	emerge -uN -q -j dev-python/virtualenv
+install/virtualenv: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/virtualenv
+	touch $@
+virtualenv: install/virtualenv
 
-virtualenvwrapper: portage-dirs virtualenv overlay-sekyfsr
+install/virtualenvwrapper: install/portage-dirs install/virtualenv
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
-	USE_PYTHON='2.7' emerge -uN -q -j dev-python/virtualenvwrapper
+	USE_PYTHON='2.7' ${EMERGE} -uN -q -j dev-python/virtualenvwrapper
+	touch $@
+virtualenvwrapper: install/virtualenvwrapper
 
-ipython: portage-dirs pyqt4
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/ipython
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/ipython
-	emerge -uN -q -j dev-python/ipython
+install/ipython: install/portage-dirs install/pyqt4
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/ipython
+	touch $@
+ipython: install/ipython
 
-ipdb: portage-dirs ipython
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/ipdb
-	emerge -uN -q -j dev-python/ipdb
+install/ipdb: install/portage-dirs install/ipython
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/ipdb
+	touch $@
+ipdb: install/ipdb
 
-cython: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/cython
+install/cython: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-python/cython
+	touch $@
+cython: install/cython
 
-pep8: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pep8
-	emerge -uN -q -j dev-python/pep8
+install/pep8: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/pep8
+	touch $@
+pep8: install/pep8
 
-autopep8: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/autopep8
-	emerge -uN -q -j dev-python/autopep8
+install/autopep8: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/autopep8
+	touch $@
+autopep8: install/autopep8
 
-numpy: portage-dirs atlas
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/numpy
+install/numpy: install/portage-dirs install/atlas
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-python/numpy
+	touch $@
+numpy: install/numpy
 
-scipy: portage-dirs numpy atlas
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j sci-libs/scipy
+install/scipy: install/portage-dirs install/numpy install/atlas
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j sci-libs/scipy
+	touch $@
+scipy: install/scipy
 
-matplotlib: portage-dirs scipy
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/matplotlib
+install/matplotlib: install/portage-dirs install/scipy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j dev-python/matplotlib
+	touch $@
+matplotlib: install/matplotlib
 
-numexpr: portage-dirs mkl
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/numexpr
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/numexpr
-	emerge -uN -q -j --onlydeps dev-python/numexpr
-	FEATURES=test emerge -uN dev-python/numexpr
+install/numexpr: install/portage-dirs install/mkl
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j --onlydeps dev-python/numexpr
+	FEATURES=test ${EMERGE} -uN dev-python/numexpr
+	touch $@
+numexpr: install/numexpr
 
-joblib: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-python/joblib
+install/joblib: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/joblib
+	touch $@
+joblib: install/joblib
 
-scikits.learn: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j sci-libs/scikits_learn
+install/scikits.learn: install/portage-dirs install/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j sci-libs/scikits_learn
+	touch $@
+scikits.learn: install/scikits.learn
 
-scikits.image: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-python/pyfits
-	emerge -uN -q -j sci-libs/scikits_image
+install/scikits.image: install/portage-dirs install/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/pyfits
+	${EMERGE} -uN -q -j sci-libs/scikits_image
+	touch $@
+scikits.image: install/scikits.image
 
-Theano: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j sci-libs/Theano
+install/Theano: install/portage-dirs install/numpy
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j sci-libs/Theano
+	touch $@
+Theano: install/Theano
 
-pytables: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pytables
-	emerge -uN -q -j dev-python/pytables
+install/pytables: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/pytables
+	touch $@
+pytables: install/pytables
 
-pymongo: portage-dirs mongodb
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/pymongo
-	emerge -uN -q -j dev-python/pymongo
+install/pymongo: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/pymongo
+	touch $@
+pymongo: install/pymongo
 
-pyqt4: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/PyQt4
+install/pyqt4: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-python/PyQt4
+	touch $@
+pyqt4: install/pyqt4
 
 pycuda: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/pycuda
+	${EMERGE} -uN -q -j dev-python/pycuda
 
 pyopencl: portage-dirs opencl
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/pyopencl
+	${EMERGE} -uN -q -j dev-python/pyopencl
 
-simplejson: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-python/simplejson
+install/simplejson: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/simplejson
+	touch $@
+simplejson: install/simplejson
 
-fabric: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-python/fabric
+install/fabric: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/fabric
+	touch $@
+fabric: install/fabric
 
 cgkit: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j dev-python/cgkit
+	${EMERGE} -uN -q -j dev-python/cgkit
 
 # -- Scientific Libraries
-atlas: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/$@
-	emerge -uN -q -j sys-power/cpufrequtils
+install/atlas: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
+	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
-	emerge -uN sci-libs/blas-atlas sci-libs/lapack-atlas
+	${EMERGE} -uN virtual/blas sci-libs/blas-atlas
 	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
 	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
+	${EMERGE} -uN virtual/lapack sci-libs/lapack-atlas
 	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
+	touch $@
+atlas: install/atlas
 
 icc: portage-dirs overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/icc
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/icc
-	emerge -uN dev-lang/icc
+	${EMERGE} -uN dev-lang/icc
 
-tbb: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/tbb
-	emerge -uN -q -j dev-cpp/tbb
+install/tbb: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-cpp/tbb
+	touch $@
+tbb: install/tbb
 
-mkl: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/mkl
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/mkl
-	emerge -uN -q -j sci-libs/mkl
+install/mkl: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
+	${EMERGE} -uN -q -j sci-libs/mkl
+	touch $@
+mkl: install/mkl
 
 shogun: portage-dirs layman overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j sci-libs/shogun
+	${EMERGE} -uN -q -j sci-libs/shogun
 
-boost:
-	cp -f {files,${EPREFIX}}/etc/portage/package.mask/$@
-	emerge -uN -q -j dev-libs/boost dev-util/boost-build
+install/boost: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j dev-libs/boost dev-util/boost-build
+	touch $@
+boost: install/boost
 
-hdf5:
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j sci-libs/hdf5
+install/hdf5: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j sci-libs/hdf5
+	touch $@
+hdf5: install/hdf5
 
 # -- Database
-mongodb: portage-dirs boost
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j dev-db/mongodb
+install/mongodb: install/portage-dirs install/boost
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-db/mongodb
+	touch $@
+mongodb: install/mongodb
 
 # -- Image / Video
-jpeg:
-	emerge --deselect media-libs/jpeg
-	emerge -uN -q -j media-libs/libjpeg-turbo
+install/jpeg:
+	${EMERGE} --deselect media-libs/jpeg
+	${EMERGE} -uN -q -j media-libs/libjpeg-turbo
+	touch $@
+jpeg: install/jpeg
 
-opencv: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
-	emerge -uN -q -j media-libs/opencv
+install/opencv: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
+	${EMERGE} -uN -q -j media-libs/opencv
+	touch $@
+opencv: install/opencv
 
-freeimage: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j media-libs/freeimage
+install/freeimage: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j media-libs/freeimage
+	touch $@
+freeimage: install/freeimage
 
-imagemagick: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j media-gfx/imagemagick
+install/imagemagick: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j '=media-libs/openexr-1.6.1'
+	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
+	# lensfun workaround
+	${EMERGE} -uN -q --deps-only media-libs/lensfun
+	ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge &> /dev/null \
+		|| FEATURES=-collision-protect ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge
+	${EMERGE} -uN -q -j media-gfx/imagemagick
+	touch $@
+imagemagick: install/imagemagick
 
-mplayer: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j media-video/mplayer
+install/mplayer: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j media-video/mplayer
+	touch $@
+mplayer: install/mplayer
 
 # -- Misc
-fonts:
-	emerge -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
+install/fonts:
+	${EMERGE} -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
-	emerge -uN -q -j terminus-font intlfonts freefonts corefonts
+	${EMERGE} -uN -q -j terminus-font intlfonts freefonts corefonts
 	# DejaVu fonts
-	emerge -uN -q -j media-fonts/dejavu
+	${EMERGE} -uN -q -j media-fonts/dejavu
 	eselect fontconfig list | grep dejavu
 	fc-match | grep DejaVuSans || exit 1
 	fc-match "Monospace" | grep DejaVuSansMono || exit 1
+	touch $@
+fonts: install/fonts
 
-dropbox: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j net-misc/dropbox
+install/dropbox: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j net-misc/dropbox
+	${EMERGE} -uN -q -j net-misc/dropbox-cli
 	sysctl -w fs.inotify.max_user_watches=1000000
 	grep max_user_watches /etc/sysctl.conf || \
 		echo "fs.inotify.max_user_watches = 1000000" >>  /etc/sysctl.conf
 	sed -i 's/fs\.inotify\.max_user_watches.*/fs\.inotify\.max_user_watches = 1000000/g' /etc/sysctl.conf
+	touch $@
+dropbox: install/dropbox
 
-texlive: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j app-text/texlive
-	#emerge -uN -q -j app-text/texlive-core
+install/texlive: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j app-text/texlive
+	#${EMERGE} -uN -q -j app-text/texlive-core
+	touch $@
+texlive: install/texlive
 
-cairo: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j x11-libs/cairo
+install/cairo: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j x11-libs/cairo
+	touch $@
+cairo: install/cairo
 
-ntfs3g: portage-dirs
-	CLEAN_DELAY=0 emerge -q -C sys-fs/ntfsprogs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j sys-fs/ntfs3g
+install/ntfs3g: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j sys-fs/ntfs3g
+	touch $@
+ntfs3g: install/ntfs3g
 
-valgrind: portage-dirs
+install/valgrind: install/portage-dirs
 	grep -e '^FEATURES.*=.*splitdebug' /etc/make.conf \
 		|| echo 'FEATURES="$${FEATURES} splitdebug"' >> /etc/make.conf
 ifeq ($(shell if test -d /usr/lib/debug/usr/lib64/misc/glibc; then echo true; else echo false; fi), false)
-	emerge -q sys-libs/glibc
+	${EMERGE} -q sys-libs/glibc
 endif
-	emerge -uN -q -j dev-util/valgrind
+	${EMERGE} -uN -q -j dev-util/valgrind
+	touch $@
+valgrind: install/valgrind
 
-megacli: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	emerge -uN -q -j sys-block/megacli
+install/megacli: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j sys-block/megacli
+	touch $@
+megacli: install/megacli
 
 # -- X
-xorg-server: portage-dirs
-	emerge -uN -q -j x11-base/xorg-server
+install/xorg-server: install/portage-dirs
+	${EMERGE} -uN -q -j x11-base/xorg-server
+	touch $@
+xorg-server: install/xorg-server
 
-nvidia-drivers: portage-dirs gcc xorg-server
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j x11-drivers/nvidia-drivers
+install/nvidia-drivers: install/portage-dirs install/gcc install/xorg-server
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j x11-drivers/nvidia-drivers
 	eselect opengl set nvidia
-	emerge -uN -q -j app-admin/eselect-opencl
+	${EMERGE} -uN -q -j app-admin/eselect-opencl
 	eselect opencl set nvidia
+	touch $@
+nvidia-drivers: install/nvidia-drivers
 
-nvidia-settings: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	emerge -uN -q -j media-video/nvidia-settings
+install/nvidia-settings: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j media-video/nvidia-settings
+	touch $@
+nvidia-settings: install/nvidia-settings
 
 # -- OpenCL
-opencl: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
-	emerge -uN -q -j virtual/opencl
+install/opencl: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
+	${EMERGE} -uN -q -j virtual/opencl
+	touch $@
+opencl: install/opencl
 
 # -- CUDA
-cuda: portage-dirs layman nvidia-drivers nvidia-settings overlay-sekyfsr
+install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
 	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
-	emerge -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
-	emerge -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
-	emerge -uN -q -j dev-util/nvidia-cuda-tdk
+	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
+	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
+	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
+	touch $@
+cuda: install/cuda
 
 # -- Java
-${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin:
-	wget http://dl.dropbox.com/u/167753/fuck-oracle/jdk-6u31-linux-x64.bin
-	mv -vf jdk-6u31-linux-x64.bin $@
+me_nodistfiles=$(subst ${EPREFIX}/usr/portage/distfiles/,,$@)
+${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin:
+	wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+	mv -vf ${me_nodistfiles} $@
 
-sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u31-linux-x64.bin
-	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
-	emerge -uN -q -j dev-java/sun-jdk
+${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz:
+	wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+	mv -vf ${me_nodistfiles} $@
+
+install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin \
+	${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
+	${EMERGE} -uN -q -j dev-java/sun-jdk
+	touch $@
+sun-jdk: install/sun-jdk

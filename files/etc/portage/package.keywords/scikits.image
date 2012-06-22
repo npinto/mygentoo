@@ -1,2 +1,5 @@
 sci-libs/scikits_image **
 sci-libs/scikits **
+=dev-python/d2to1-0.2.7 **
+=dev-python/stsci-distutils-0.3 **
+=dev-python/pyfits-3.0.7 **

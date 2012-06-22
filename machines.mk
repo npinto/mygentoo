@@ -1,17 +1,26 @@
+include init.mk
+
 me:
+ifeq ($(strip ${EPREFIX}), )
 	make _$(shell hostname)
+else
+	make _prefix
+endif
+
+_desktop:
+	make awesome
+	make chromium
+	make adobe-flash
+	make gnome-terminal
 
 _dev:
 	make portage-sqlite
-	make autounmask
-	make adobe-flash
+	#make autounmask
 	make atlas
 	make autopep8
-	make awesome
-	make bind
+	#make bind
 	make cairo
-	make cgkit
-	make chromium
+	#make cgkit
 	make cuda
 	make cython
 	make dropbox
@@ -23,7 +32,6 @@ _dev:
 	make freeimage
 	make gcc
 	make gdm
-	make gnome-terminal
 	make gthumb
 	make gvim
 	make icc
@@ -75,11 +83,13 @@ _dev:
 	make xdg-config
 	#make opencv
 	# --
-	emerge -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
 
-_primo: _dev
-_logilo: _dev
-_thor-dev-1: _dev
+_primo: _dev _desktop
+_logilo: _dev _desktop
+_thor-dev-1: _dev _desktop
 
 _honeybadger:
 	make portage-sqlite
@@ -99,7 +109,8 @@ _honeybadger:
 	make virtualenv virtualenvwrapper
 	# --
 	make atlas
-	make numpy scipy matplotlib
+	make numpy scipy
+	make matplotlib
 	make cython
 	make pep8 autopep8
 	make joblib
@@ -141,3 +152,81 @@ _honeybadger:
 	make wgetpaste
 	# --
 	make megacli
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
+
+_prefix:
+	make portage-sqlite
+	make eix
+	#make locale
+	make layman
+	#make gcc
+	make fabric
+	make parallel
+	# --
+	make vim
+	# --
+	make python
+	make setuptools
+	make pip
+	make ipython ipdb
+	make virtualenv virtualenvwrapper
+	# --
+	make atlas
+	make numpy scipy
+	#make matplotlib
+	make cython
+	make pep8 autopep8
+	make joblib
+	make cairo
+	#make cgkit
+	#make numexpr
+	make scikits.image
+	make scikits.learn
+	make Theano
+	make simplejson
+	# --
+	#make nvidia-drivers
+	#make nvidia-settings
+	#make cuda
+	#make pycuda
+	#make opencl
+	#make pyopencl
+	# --
+	make pyqt4
+	make pytables
+	# --
+	#make mkl
+	#make icc
+	#make valgrind
+	#make tbb
+	#make shogun
+	# --
+	make jpeg
+	#make freeimage
+	make imagemagick
+	#make gthumb
+	#make mplayer
+	#make opencv
+	# --
+	#make mongodb
+	make pymongo
+	# --
+	#make texlive
+	make wgetpaste
+	# --
+	#make megacli
+	#make sun-jdk
+	#make tbb
+	#make terminator
+	#make texlive
+	#make valgrind
+	#make vim
+	#make wgetpaste
+	#make xdg
+	#make xdg-config
+	#make opencv
+	# --
+	${EMERGE} -uN -j sys-fs/ncdu
+	${EMERGE} -uN -j sys-process/htop
+	${EMERGE} -uN -j app-misc/tmux
