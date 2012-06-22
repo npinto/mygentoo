@@ -115,8 +115,8 @@ gcc: portage-dirs
 	#emerge -uN -q '=sys-devel/gcc-4.1.2'
 	emerge -uN -q '=sys-devel/gcc-4.2.4-r1'
 	emerge -uN -q '=sys-devel/gcc-4.3.6-r1'
-	emerge -uN -q "=sys-devel/gcc-4.4.7"
-	emerge -uN -q '=sys-devel/gcc-4.6.2'
+	emerge -uN -q "=sys-devel/gcc-4.4*"
+	emerge -uN -q "=sys-devel/gcc-4.6*"
 
 module-rebuild:
 	emerge -uN -q -j sys-kernel/module-rebuild
