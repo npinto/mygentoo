@@ -64,14 +64,13 @@ install/portage-sqlite: install/portage-dirs
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf && echo true), 'true')
+ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
 	${EMERGE} -uN -q -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
 	rm -rf ${EPREFIX}/var/cache/edb/dep
 	${EMERGE} --metadata
 	make eix
-	#cp -vf ${EPREFIX}/etc/make.conf ${EPREFIX}/etc/make.conf.portage-sqlite
 endif
 	touch $@
 portage-sqlite: install/portage-sqlite
@@ -99,6 +98,7 @@ install/_overlay: install/layman
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
+	eix-sync -q
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
 install/overlay-sekyfsr: install/_overlay
@@ -448,11 +448,13 @@ install/atlas: install/portage-dirs
 	touch $@
 atlas: install/atlas
 
-icc: portage-dirs overlay-sekyfsr
+install/icc: install/portage-dirs install/overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/icc
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/icc
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/icc
 	${EMERGE} -uN dev-lang/icc
+	touch $@
+icc: install/icc
 
 install/tbb: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -629,7 +631,6 @@ opencl: install/opencl
 
 # -- CUDA
 install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
-	eix-sync -q
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
