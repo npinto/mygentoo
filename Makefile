@@ -214,8 +214,9 @@ gthumb: portage-dirs
 	${EMERGE} -uN -q -j media-gfx/gthumb
 
 install/evince: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	command -v evince &> /dev/null || ${EMERGE} -uN -q -j app-text/evince
+	${EMERGE} -uN -q -j app-text/evince
 	touch $@
 evince: install/evince
 
