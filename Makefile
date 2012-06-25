@@ -291,6 +291,7 @@ setuptools: install/setuptools
 
 install/virtualenv: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j dev-python/virtualenv
 	touch $@
 virtualenv: install/virtualenv
