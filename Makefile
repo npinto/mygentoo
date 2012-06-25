@@ -437,12 +437,16 @@ cgkit: portage-dirs
 install/atlas: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+ifneq ($(strip ${EPREFIX}), )
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}.prefix
+else
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
+endif
 	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
 	${EMERGE} -uN virtual/blas sci-libs/blas-atlas
-	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads
-	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads
+	eselect blas list | grep 'atlas-threads \*' || eselect blas set atlas-threads || exit 0
+	eselect cblas list | grep 'atlas-threads \*' || eselect cblas set atlas-threads || exit 0
 	${EMERGE} -uN virtual/lapack sci-libs/lapack-atlas
 	eselect lapack list | grep 'atlas \*' || eselect lapack set atlas
 	touch $@
