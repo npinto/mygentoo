@@ -25,3 +25,6 @@ glsa-201203-12:
 	emerge --sync --quiet
 	emerge -uN --quiet --oneshot ">=dev-libs/openssl-1.0.0g"
 	CLEAN_DELAY=0 emerge -q -C '<dev-libs/openssl-1.0.0g'
+
+ #emerge portage-utils; qlist -I -C x11-drivers/
+
