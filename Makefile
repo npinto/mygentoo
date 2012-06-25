@@ -589,6 +589,7 @@ megacli: install/megacli
 
 # -- X
 install/xorg-server: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j x11-base/xorg-server
 	touch $@
 xorg-server: install/xorg-server
