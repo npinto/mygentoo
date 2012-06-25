@@ -290,13 +290,16 @@ setuptools: install/setuptools
 
 install/virtualenv: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j dev-python/virtualenv
 	touch $@
 virtualenv: install/virtualenv
 
 install/virtualenvwrapper: install/portage-dirs install/virtualenv
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/virtualenvwrapper
-	USE_PYTHON='2.7' ${EMERGE} -uN -q -j dev-python/virtualenvwrapper
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	#USE_PYTHON='2.7' ${EMERGE} -uN -q -j dev-python/virtualenvwrapper
+	${EMERGE} -uN -q -j dev-python/virtualenvwrapper
 	touch $@
 virtualenvwrapper: install/virtualenvwrapper
 
