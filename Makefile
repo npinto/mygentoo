@@ -213,9 +213,17 @@ gthumb: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	${EMERGE} -uN -q -j media-gfx/gthumb
 
-evince: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/evince: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	command -v evince &> /dev/null || ${EMERGE} -uN -q -j app-text/evince
+	touch $@
+evince: install/evince
+
+install/acroread: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j app-text/acroread
+	touch $@
+acroread: install/acroread
 
 nautilus: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
