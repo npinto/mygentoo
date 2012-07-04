@@ -528,6 +528,7 @@ install/imagemagick: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	${EMERGE} -uN -q -j '>=media-libs/openexr-1.6.1'
 	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
 	# lensfun workaround
