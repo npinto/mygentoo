@@ -406,6 +406,7 @@ pymongo: install/pymongo
 install/pyqt4: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j dev-python/PyQt4
 	touch $@
 pyqt4: install/pyqt4
