@@ -616,6 +616,7 @@ xorg-server: install/xorg-server
 install/nvidia-drivers: install/portage-dirs install/gcc install/xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j x11-drivers/nvidia-drivers
 	eselect opengl set nvidia
 	${EMERGE} -uN -q -j app-admin/eselect-opencl
