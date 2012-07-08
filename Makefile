@@ -19,8 +19,8 @@ update:
 ifeq (${NO_EIX_SYNC},)
 	eix-sync -q
 endif
-	glsa-check -q -t all
 ifeq ($(strip ${EPREFIX}), )
+	glsa-check -q -t all
 	glsa-check -q -f all
 endif
 ifeq (${NO_ASK},)
