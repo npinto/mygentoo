@@ -642,8 +642,8 @@ opencl: install/opencl
 
 # -- CUDA
 install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
 	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
@@ -667,3 +667,16 @@ install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin \
 	${EMERGE} -uN -q -j dev-java/sun-jdk
 	touch $@
 sun-jdk: install/sun-jdk
+
+# -- VMs
+install/virtualbox: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
+	${EMERGE} -uN -q -j app-emulation/virtualbox
+	touch $@
+virtualbox: install/virtualbox
+
+install/vagrant: install/portage-dirs install/virtualbox
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j app-emulation/vagrant
+	touch $@
+vagrant: install/vagrant
