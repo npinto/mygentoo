@@ -20,7 +20,9 @@ ifeq (${NO_EIX_SYNC},)
 	eix-sync -q
 endif
 	glsa-check -q -t all
+ifeq ($(strip ${EPREFIX}), )
 	glsa-check -q -f all
+endif
 ifeq (${NO_ASK},)
 	${EMERGE} --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	${EMERGE} --ask --depclean -q # -tv
@@ -526,7 +528,8 @@ install/imagemagick: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
-	${EMERGE} -uN -q -j '>=media-libs/openexr-1.6.1'
+	${EMERGE} -uN -q -j '>=media-libs/openexr-1.6.1' &> /dev/null \
+		|| ${EMERGE} -uN -q -j '=media-libs/openexr-1.6.1'
 	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
 	# lensfun workaround
 	${EMERGE} -uN -q --onlydeps media-libs/lensfun
@@ -543,6 +546,21 @@ install/mplayer: install/portage-dirs
 mplayer: install/mplayer
 
 # -- Misc
+install/ncdu:
+	${EMERGE} -uN -j sys-fs/ncdu
+	touch $@
+ncdu: install/ncdu
+
+install/htop:
+	${EMERGE} -uN -j sys-process/htop
+	touch $@
+htop: install/htop
+
+install/tmux:
+	${EMERGE} -uN -j app-misc/tmux
+	touch $@
+tmux: install/tmux
+
 install/fonts:
 	${EMERGE} -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
