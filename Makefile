@@ -528,13 +528,10 @@ install/imagemagick: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
-	${EMERGE} -uN -q -j '>=media-libs/openexr-1.6.1' &> /dev/null \
-		|| ${EMERGE} -uN -q -j '=media-libs/openexr-1.6.1'
+	${EMERGE} -uN -q -j '>=media-libs/openexr-1.6.1'
 	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
 	# lensfun workaround
-	${EMERGE} -uN -q --onlydeps media-libs/lensfun
-	ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge &> /dev/null \
-		|| FEATURES=-collision-protect ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge
+	${EMERGE} -uN -q -j media-libs/lensfun
 	${EMERGE} -uN -q -j media-gfx/imagemagick
 	touch $@
 imagemagick: install/imagemagick
