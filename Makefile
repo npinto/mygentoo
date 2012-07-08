@@ -64,12 +64,14 @@ install/portage-sqlite: install/portage-dirs
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
+#ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
+ifneq ($(shell test -f ${EPREFIX}/var/cache/edb/dep/.sqlite.done && echo true),true)
 	${EMERGE} -uN -q -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
 	rm -rf ${EPREFIX}/var/cache/edb/dep
 	${EMERGE} --metadata
+	touch ${EPREFIX}/var/cache/edb/dep/.sqlite.done
 	make eix
 endif
 	touch $@
@@ -442,11 +444,7 @@ cgkit: portage-dirs
 install/atlas: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
-ifneq ($(strip ${EPREFIX}), )
-	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}.prefix
-else
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
-endif
 	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
 	${EMERGE} -uN virtual/blas sci-libs/blas-atlas
