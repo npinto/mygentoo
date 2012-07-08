@@ -585,7 +585,7 @@ cairo: install/cairo
 
 install/ntfs3g: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
+	-CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
 	touch $@
