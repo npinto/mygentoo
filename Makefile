@@ -96,14 +96,12 @@ install/layman:
 	touch $@
 layman: install/layman
 
-install/_overlay: install/layman
+install/overlay-sekyfsr: OVERLAY=sekyfsr
+install/overlay-sekyfsr: install/layman
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
 	eix-sync -q
-
-install/overlay-sekyfsr: OVERLAY=sekyfsr
-install/overlay-sekyfsr: install/_overlay
 	touch $@
 overlay-sekyfsr: install/overlay-sekyfsr
 
@@ -670,11 +668,16 @@ sun-jdk: install/sun-jdk
 install/virtualbox: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j app-emulation/virtualbox
+	@echo "****************************************************************"
+	@echo "Don't forget to add your users to the 'vboxusers' group, e.g.:"
+	@echo "sudo gpasswd -a \$${USER} vboxusers"
+	@echo "****************************************************************"
 	touch $@
 virtualbox: install/virtualbox
 
 install/vagrant: install/portage-dirs install/virtualbox
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j app-emulation/vagrant
 	touch $@
 vagrant: install/vagrant
