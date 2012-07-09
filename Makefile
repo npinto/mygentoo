@@ -22,7 +22,6 @@ endif
 ifeq ($(strip ${EPREFIX}), )
 	glsa-check -q -t all
 	glsa-check -q -f all
-endif
 ifeq (${NO_ASK},)
 	${EMERGE} --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	${EMERGE} --ask --depclean -q # -tv
@@ -31,6 +30,7 @@ else
 	${EMERGE} -qtuDN -q -j --with-bdeps y --keep-going world system
 	${EMERGE} --depclean -q #-tv
 	revdep-rebuild -q -i
+endif
 endif
 	eclean-dist -d
 	eclean distfiles
