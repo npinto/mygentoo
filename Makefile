@@ -81,6 +81,7 @@ portage-sqlite: install/portage-sqlite
 
 install/eix: install/portage-dirs install/layman
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	cp -f {files,${EPREFIX}}/etc/eixrc
