@@ -549,6 +549,11 @@ install/mplayer: install/portage-dirs
 mplayer: install/mplayer
 
 # -- Misc
+install/zsh:
+	${EMERGE} -uN -j app-shells/zsh
+	touch $@
+zsh: install/zsh
+
 install/ncdu:
 	${EMERGE} -uN -j sys-fs/ncdu
 	touch $@

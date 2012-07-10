@@ -84,6 +84,7 @@ _dev:
 	make xdg-config
 	#make opencv
 	# --
+	make zsh
 	make ncdu
 	make htop
 	make tmux
@@ -228,6 +229,7 @@ _prefix:
 	#make xdg-config
 	#make opencv
 	# --
+	make zsh
 	make ncdu
 	make htop
 	make tmux
