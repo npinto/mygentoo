@@ -401,8 +401,13 @@ install/pytables: install/portage-dirs
 pytables: install/pytables
 
 install/pymongo: install/portage-dirs
+ifeq ($(strip ${EPREFIX}), )
+	make install/mongodb
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pymongo
+else
+	pip install -vU pymongo --user
+endif
 	touch $@
 pymongo: install/pymongo
 
