@@ -1,0 +1,12 @@
+app-emulation/vagrant **
+=virtual/ruby-ffi-1 **
+=dev-ruby/erubis-2.7.0 **
+=dev-ruby/net-scp-1.0.4-r1 **
+=dev-ruby/abstract-1.0.0-r1 **
+=dev-ruby/childprocess-0.3.2 **
+=dev-ruby/log4r-1.1.10 **
+=dev-ruby/i18n-0.6.0-r1 **
+=dev-ruby/net-ssh-2.4.0 **
+=dev-ruby/ffi-1.0.11 **
+=dev-ruby/archive-tar-minitar-0.5.2-r4 **
+=dev-ruby/childprocess-0.3.3 **

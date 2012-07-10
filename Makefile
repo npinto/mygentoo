@@ -19,6 +19,7 @@ update:
 ifeq (${NO_EIX_SYNC},)
 	eix-sync -q
 endif
+ifeq ($(strip ${EPREFIX}), )
 	glsa-check -q -t all
 	glsa-check -q -f all
 ifeq (${NO_ASK},)
@@ -29,6 +30,7 @@ else
 	${EMERGE} -qtuDN -q -j --with-bdeps y --keep-going world system
 	${EMERGE} --depclean -q #-tv
 	revdep-rebuild -q -i
+endif
 endif
 	eclean-dist -d
 	eclean distfiles
@@ -64,12 +66,14 @@ install/portage-sqlite: install/portage-dirs
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
 	#  http://www.gentoo-wiki.info/TIP_speed_up_portage_with_sqlite
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
-ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
+#ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
+ifneq ($(shell test -f ${EPREFIX}/var/cache/edb/dep/.sqlite.done && echo true),true)
 	${EMERGE} -uN -q -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
 	rm -rf ${EPREFIX}/var/cache/edb/dep
 	${EMERGE} --metadata
+	touch ${EPREFIX}/var/cache/edb/dep/.sqlite.done
 	make eix
 endif
 	touch $@
@@ -77,6 +81,7 @@ portage-sqlite: install/portage-sqlite
 
 install/eix: install/portage-dirs install/layman
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	cp -f {files,${EPREFIX}}/etc/eixrc
@@ -94,14 +99,12 @@ install/layman:
 	touch $@
 layman: install/layman
 
-install/_overlay: install/layman
+install/overlay-sekyfsr: OVERLAY=sekyfsr
+install/overlay-sekyfsr: install/layman
 	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
 	eix-sync -q
-
-install/overlay-sekyfsr: OVERLAY=sekyfsr
-install/overlay-sekyfsr: install/_overlay
 	touch $@
 overlay-sekyfsr: install/overlay-sekyfsr
 
@@ -406,6 +409,7 @@ pymongo: install/pymongo
 install/pyqt4: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j dev-python/PyQt4
 	touch $@
 pyqt4: install/pyqt4
@@ -441,11 +445,7 @@ cgkit: portage-dirs
 install/atlas: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
-ifneq ($(strip ${EPREFIX}), )
-	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}.prefix
-else
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
-endif
 	${EMERGE} -uN -q -j sys-power/cpufrequtils
 	cpufreq-set -g performance || true
 	${EMERGE} -uN virtual/blas sci-libs/blas-atlas
@@ -528,12 +528,11 @@ install/imagemagick: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
 	${EMERGE} -uN -q -j '>=media-libs/openexr-1.6.1'
-	${EMERGE} -uN -q -j '=x11-libs/pango-1.30.0'
+	${EMERGE} -uN -q -j '>=x11-libs/pango-1.30.0'
 	# lensfun workaround
-	${EMERGE} -uN -q --onlydeps media-libs/lensfun
-	ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge &> /dev/null \
-		|| FEATURES=-collision-protect ebuild ${EPREFIX}/var/lib/layman/sekyfsr/media-libs/lensfun/lensfun-0.2.5_p153-r2.ebuild merge
+	${EMERGE} -uN -q -j media-libs/lensfun
 	${EMERGE} -uN -q -j media-gfx/imagemagick
 	touch $@
 imagemagick: install/imagemagick
@@ -545,6 +544,21 @@ install/mplayer: install/portage-dirs
 mplayer: install/mplayer
 
 # -- Misc
+install/ncdu:
+	${EMERGE} -uN -j sys-fs/ncdu
+	touch $@
+ncdu: install/ncdu
+
+install/htop:
+	${EMERGE} -uN -j sys-process/htop
+	touch $@
+htop: install/htop
+
+install/tmux:
+	${EMERGE} -uN -j app-misc/tmux
+	touch $@
+tmux: install/tmux
+
 install/fonts:
 	${EMERGE} -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
@@ -583,7 +597,7 @@ cairo: install/cairo
 
 install/ntfs3g: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
+	-CLEAN_DELAY=0 ${EMERGE} -q -C sys-fs/ntfsprogs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sys-fs/ntfs3g
 	touch $@
@@ -640,8 +654,8 @@ opencl: install/opencl
 
 # -- CUDA
 install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/cuda
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/cuda
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
 	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
 	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
@@ -665,3 +679,21 @@ install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin \
 	${EMERGE} -uN -q -j dev-java/sun-jdk
 	touch $@
 sun-jdk: install/sun-jdk
+
+# -- VMs
+install/virtualbox: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
+	${EMERGE} -uN -q -j app-emulation/virtualbox
+	@echo "****************************************************************"
+	@echo "Don't forget to add your users to the 'vboxusers' group, e.g.:"
+	@echo "sudo gpasswd -a \$${USER} vboxusers"
+	@echo "****************************************************************"
+	touch $@
+virtualbox: install/virtualbox
+
+install/vagrant: install/portage-dirs install/virtualbox
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j app-emulation/vagrant
+	touch $@
+vagrant: install/vagrant

@@ -1,5 +1,6 @@
 include init.mk
 
+
 me:
 ifeq ($(strip ${EPREFIX}), )
 	make _$(shell hostname)
@@ -83,9 +84,9 @@ _dev:
 	make xdg-config
 	#make opencv
 	# --
-	${EMERGE} -uN -j sys-fs/ncdu
-	${EMERGE} -uN -j sys-process/htop
-	${EMERGE} -uN -j app-misc/tmux
+	make ncdu
+	make htop
+	make tmux
 
 _primo: _dev _desktop
 _logilo: _dev _desktop
@@ -227,6 +228,6 @@ _prefix:
 	#make xdg-config
 	#make opencv
 	# --
-	${EMERGE} -uN -j sys-fs/ncdu
-	${EMERGE} -uN -j sys-process/htop
-	${EMERGE} -uN -j app-misc/tmux
+	make ncdu
+	make htop
+	make tmux
