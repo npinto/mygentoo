@@ -67,7 +67,7 @@ install/sqlite: install/portage-dirs
 	touch $@
 sqlite: install/sqlite
 
-install/portage-sqlite: install/portage-dirs
+install/portage-sqlite: install/portage-dirs install/sqlite
 	# -- portage sql cache
 	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
