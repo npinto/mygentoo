@@ -67,7 +67,7 @@ install/pysqlite: install/portage-dirs
 	touch $@
 pysqlite: install/pysqlite
 
-install/portage-sqlite: install/portage-dirs install/sqlite
+install/portage-sqlite: install/portage-dirs install/pysqlite
 	# -- portage sql cache
 	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
