@@ -60,6 +60,13 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
+install/sqlite: install/portage-dirs
+	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-python/pysqlite
+	touch $@
+sqlite: install/sqlite
+
 install/portage-sqlite: install/portage-dirs
 	# -- portage sql cache
 	# See:
@@ -68,7 +75,6 @@ install/portage-sqlite: install/portage-dirs
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
 #ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
 ifneq ($(shell test -f ${EPREFIX}/var/cache/edb/dep/.sqlite.done && echo true),true)
-	${EMERGE} -uN -q -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
 	rm -rf ${EPREFIX}/var/cache/edb/dep
