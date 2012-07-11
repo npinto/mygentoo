@@ -95,25 +95,27 @@ endif
 	touch $@
 portage-sqlite: install/portage-sqlite
 
+install/layman:
+	${EMERGE} -uN -q -j app-portage/layman
+	touch ${EPREFIX}/var/lib/layman/make.conf
+	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
+		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
+	cp -f {files,${EPREFIX}}/var/lib/layman/make.conf
+	cp -f {files,${EPREFIX}}/var/lib/layman/overlays.xml
+	@echo "$(layman -L | wc -l) overlays found"
+	layman -S
+	touch $@
+layman: install/layman
+
 install/eix: install/portage-dirs install/layman
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
 	cp -f files/etc/eixrc.vanilla ${EPREFIX}/etc/eixrc
-	#eix-sync -q
+	# eix-sync -q
 	touch $@
 eix: install/eix
-
-install/layman:
-	${EMERGE} -uN -q -j app-portage/layman
-	touch ${EPREFIX}/var/lib/layman/make.conf
-	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
-		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
-	@echo "$(layman -L | wc -l) overlays found"
-	layman -S
-	touch $@
-layman: install/layman
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
 install/overlay-sekyfsr: install/layman
