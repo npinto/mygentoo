@@ -71,7 +71,6 @@ portage: install/portage
 install/pysqlite: install/portage-dirs
 	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	USE=extensions  
 	${EMERGE} -uN -q -j dev-python/pysqlite
 	touch $@
 pysqlite: install/pysqlite
@@ -464,7 +463,7 @@ cgkit: portage-dirs
 	${EMERGE} -uN -q -j dev-python/cgkit
 
 # -- Scientific Libraries
-install/atlas: install/portage-dirs
+install/atlas: install/portage-dirs install/overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
