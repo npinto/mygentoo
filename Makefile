@@ -81,6 +81,8 @@ ifneq ($(shell test -f ${EPREFIX}/var/cache/edb/dep/.sqlite.done && echo true),t
 	${EMERGE} --metadata
 	touch ${EPREFIX}/var/cache/edb/dep/.sqlite.done
 	make eix
+	cp -f files/etc/eixrc.sqlite ${EPREFIX}/etc/eixrc
+	eix-sync -q
 endif
 	touch $@
 portage-sqlite: install/portage-sqlite
@@ -90,8 +92,8 @@ install/eix: install/portage-dirs install/layman
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	${EMERGE} -uN -q -j app-portage/eix
 	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
-	cp -f {files,${EPREFIX}}/etc/eixrc
-	eix-sync -q
+	cp -f files/etc/eixrc.vanilla ${EPREFIX}/etc/eixrc
+	#eix-sync -q
 	touch $@
 eix: install/eix
 
