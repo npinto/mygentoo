@@ -693,7 +693,7 @@ sun-jdk: install/sun-jdk
 # -- VMs
 install/virtualbox: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
-	${EMERGE} -uN -q -j app-emulation/virtualbox
+	${EMERGE} -uN -q -j app-emulation/virtualbox app-emulation/virtualbox-guest-additions
 	@echo "****************************************************************"
 	@echo "Don't forget to add your users to the 'vboxusers' group, e.g.:"
 	@echo "sudo gpasswd -a \$${USER} vboxusers"
