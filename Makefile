@@ -118,7 +118,9 @@ eix: install/eix
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
 install/overlay-sekyfsr: install/layman
-	layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
+	-layman -d ${OVERLAY}
+	layman -a ${OVERLAY}
+	#layman -l | grep ${OVERLAY} || layman -a ${OVERLAY}
 	layman -q -s ${OVERLAY}
 	egencache --repo=${OVERLAY} --update
 	eix-sync -q
