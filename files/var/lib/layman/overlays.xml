@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repositories version="1.0">
+  <repo priority="50" quality="experimental" status="unofficial">
+    <name>sekyfsr</name>
+    <description>Nicolas Pinto's sekyfsr overlay</description>
+    <homepage>https://github.com/npinto/sekyfsr-gentoo-overlay</homepage>
+    <owner>
+      <email>pinto@mit.edu</email>
+      <name>Nicolas Pinto</name>
+    </owner>
+    <source type="git">git://github.com/npinto/sekyfsr-gentoo-overlay.git</source>
+    <feed>https://github.com/npinto/sekyfsr-gentoo-overlay/commits/master.atom</feed>
+  </repo>
+</repositories>

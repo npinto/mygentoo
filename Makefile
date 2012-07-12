@@ -65,7 +65,22 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
-install/portage-sqlite: install/portage-dirs
+install/portage: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j sys-apps/portage
+	touch $@
+portage: install/portage
+
+
+install/pysqlite: install/portage-dirs
+	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-python/pysqlite
+	touch $@
+pysqlite: install/pysqlite
+
+install/portage-sqlite: install/portage-dirs install/pysqlite
 	# -- portage sql cache
 	# See:
 	#  http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache
@@ -73,36 +88,39 @@ install/portage-sqlite: install/portage-dirs
 	#  http://forums.gentoo.org/viewtopic.php?t=261580
 #ifneq ($(shell grep -e '^FEATURES.*=.*metadata-transfer' ${EPREFIX}/etc/make.conf &> /dev/null && echo true), true)
 ifneq ($(shell test -f ${EPREFIX}/var/cache/edb/dep/.sqlite.done && echo true),true)
-	${EMERGE} -uN -q -j dev-python/pysqlite
 	cp -f {files,${EPREFIX}}/etc/portage/modules
 	echo 'FEATURES="$${FEATURES} metadata-transfer"' >> ${EPREFIX}/etc/make.conf
 	rm -rf ${EPREFIX}/var/cache/edb/dep
 	${EMERGE} --metadata
 	touch ${EPREFIX}/var/cache/edb/dep/.sqlite.done
 	make eix
+	cp -f files/etc/eixrc.sqlite ${EPREFIX}/etc/eixrc
+	eix-sync -q
 endif
 	touch $@
 portage-sqlite: install/portage-sqlite
-
-install/eix: install/portage-dirs install/layman
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
-	${EMERGE} -uN -q -j app-portage/eix
-	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
-	cp -f {files,${EPREFIX}}/etc/eixrc
-	eix-sync -q
-	touch $@
-eix: install/eix
 
 install/layman:
 	${EMERGE} -uN -q -j app-portage/layman
 	touch ${EPREFIX}/var/lib/layman/make.conf
 	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
 		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
+	cp -f {files,${EPREFIX}}/var/lib/layman/make.conf
+	cp -f {files,${EPREFIX}}/var/lib/layman/overlays.xml
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
 	touch $@
 layman: install/layman
+
+install/eix: install/portage-dirs install/layman
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	${EMERGE} -uN -q -j app-portage/eix
+	cp -f {files,${EPREFIX}}/etc/eix-sync.conf
+	cp -f files/etc/eixrc.vanilla ${EPREFIX}/etc/eixrc
+	# eix-sync -q
+	touch $@
+eix: install/eix
 
 install/overlay-sekyfsr: OVERLAY=sekyfsr
 install/overlay-sekyfsr: install/layman
@@ -338,7 +356,7 @@ install/pep8: install/portage-dirs
 	touch $@
 pep8: install/pep8
 
-install/autopep8: install/portage-dirs
+install/autopep8: install/portage-dirs install/pep8
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/autopep8
 	touch $@
@@ -452,7 +470,7 @@ cgkit: portage-dirs
 	${EMERGE} -uN -q -j dev-python/cgkit
 
 # -- Scientific Libraries
-install/atlas: install/portage-dirs
+install/atlas: install/portage-dirs install/overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
@@ -698,7 +716,7 @@ sun-jdk: install/sun-jdk
 # -- VMs
 install/virtualbox: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
-	${EMERGE} -uN -q -j app-emulation/virtualbox
+	${EMERGE} -uN -q -j app-emulation/virtualbox app-emulation/virtualbox-additions app-emulation/virtualbox-guest-additions
 	@echo "****************************************************************"
 	@echo "Don't forget to add your users to the 'vboxusers' group, e.g.:"
 	@echo "sudo gpasswd -a \$${USER} vboxusers"
