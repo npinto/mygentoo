@@ -99,8 +99,8 @@ install/layman:
 	touch ${EPREFIX}/var/lib/layman/make.conf
 	grep -e '^source.*layman.*' ${EPREFIX}/etc/make.conf \
 		|| echo "source ${EPREFIX}/var/lib/layman/make.conf" >> ${EPREFIX}/etc/make.conf
-	cp -f {files,${EPREFIX}}/var/lib/layman/make.conf
-	cp -f {files,${EPREFIX}}/var/lib/layman/overlays.xml
+	#cp -f {files,${EPREFIX}}/var/lib/layman/make.conf
+	#cp -f {files,${EPREFIX}}/var/lib/layman/overlays.xml
 	@echo "$(layman -L | wc -l) overlays found"
 	layman -S
 	touch $@
