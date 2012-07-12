@@ -351,7 +351,7 @@ install/pep8: install/portage-dirs
 	touch $@
 pep8: install/pep8
 
-install/autopep8: install/portage-dirs
+install/autopep8: install/portage-dirs install/pep8
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/autopep8
 	touch $@
