@@ -1,3 +1,4 @@
 x11-drivers/nvidia-drivers gtk
 x11-libs/libdrm libkms
 dev-libs/libxml2 python
+x11-libs/cairo X
