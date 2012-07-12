@@ -39,7 +39,9 @@ endif
 	dispatch-conf
 
 # -- Portage
-install/portage:
+install/portage: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j sys-apps/portage app-portage/portage-utils app-portage/gentoolkit
 	touch $@
 portage: install/portage
@@ -64,14 +66,6 @@ autounmask: portage-dirs
 ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' ${EPREFIX}/etc/make.conf; then echo true; else echo false; fi), false)
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
-
-install/portage: install/portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	${EMERGE} -uN -q -j sys-apps/portage
-	touch $@
-portage: install/portage
-
 
 install/pysqlite: install/portage-dirs
 	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
