@@ -588,6 +588,12 @@ install/tmux:
 	touch $@
 tmux: install/tmux
 
+install/git: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j dev-vcs/git
+git: install/git
+
 install/fonts:
 	${EMERGE} -uN -q -j $(shell eix --only-names -A media-fonts -s font-)
 	# from "Using UTF-8 with Gentoo" (http://www.gentoo.org/doc/en/utf-8.xml)
