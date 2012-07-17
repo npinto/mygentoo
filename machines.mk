@@ -24,7 +24,7 @@ _dev:
 	#make cgkit
 	make cuda
 	make cython
-	make dropbox
+	#make dropbox
 	make eix
 	make evince
 	make fabric
