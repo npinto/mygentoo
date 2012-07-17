@@ -414,7 +414,7 @@ install/Theano: install/portage-dirs install/numpy
 	touch $@
 Theano: install/Theano
 
-install/pytables: install/portage-dirs
+install/pytables: install/portage-dirs install/hdf5
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pytables
 	touch $@
