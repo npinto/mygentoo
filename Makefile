@@ -692,8 +692,8 @@ opencl: install/opencl
 install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
-	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
+	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2.9'
+	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2.9'
 	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
 	touch $@
