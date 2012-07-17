@@ -381,9 +381,14 @@ install/matplotlib: install/portage-dirs install/scipy
 	touch $@
 matplotlib: install/matplotlib
 
-install/numexpr: install/portage-dirs install/mkl
+install/numexpr: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+ifeq ($(strip ${MKL_LICENSE}), )
+	sed -i -e "s/mkl//g" ${EPREFIX}/etc/portage/package.use/${me}
+else
+	make mkl
+endif
 	${EMERGE} -uN -q -j --onlydeps dev-python/numexpr
 	FEATURES=test ${EMERGE} -uN dev-python/numexpr
 	touch $@
@@ -505,6 +510,7 @@ else:
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j sci-libs/mkl
 	touch $@
+endif
 mkl: install/mkl
 
 shogun: portage-dirs layman overlay-sekyfsr
