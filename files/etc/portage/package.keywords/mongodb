@@ -3,3 +3,4 @@ app-arch/snappy **
 app-admin/eselect-boost **
 =dev-lang/v8-3.10* **
 =dev-libs/boost-1.49* **
+=dev-util/boost-build-1.49* **
