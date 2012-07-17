@@ -67,7 +67,7 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
-install/pysqlite: install/portage-dirs
+install/pysqlite: install/portage-dirs install/python
 	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-python/pysqlite
