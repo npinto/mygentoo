@@ -205,7 +205,7 @@ gdm: portage-dirs xorg-server
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
 	cp -f {files,${EPREFIX}}/etc/conf.d/xdm
 	${EMERGE} -uN -q -j gnome-base/gdm
-	rc-update add xdm default
+	#rc-update add xdm default
 
 install/feh: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
