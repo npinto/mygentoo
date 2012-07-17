@@ -508,6 +508,7 @@ shogun: portage-dirs layman overlay-sekyfsr
 
 install/boost: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-libs/boost dev-util/boost-build
 	touch $@
 boost: install/boost
