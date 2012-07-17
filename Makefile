@@ -496,6 +496,11 @@ install/tbb: install/portage-dirs
 tbb: install/tbb
 
 install/mkl: install/portage-dirs
+ifeq ($(strip ${MKL_LICENSE}), )
+	@echo "* Did not find any valid mkl license."
+	@echo "* Register at http://developer.intel.com/software/products/mkl/ to receive a license"
+	@echo "* export MKL_LICENSE=/my/license/file make mkl"
+else:
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
 	${EMERGE} -uN -q -j sci-libs/mkl
