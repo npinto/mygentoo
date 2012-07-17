@@ -1,2 +1,3 @@
 media-libs/mesa xa
 x11-libs/libdrm libkms
+dev-libs/libxml2 python
