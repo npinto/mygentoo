@@ -67,7 +67,7 @@ ifeq ($(shell if grep -e '^EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --auto
 	echo 'EMERGE_DEFAULT_OPTS = "$${EMERGE_DEFAULT_OPTS} --autounmask-write=y"' >> ${EPREFIX}/etc/make.conf
 endif
 
-install/pysqlite: install/portage-dirs
+install/pysqlite: install/portage-dirs install/python
 	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j dev-python/pysqlite
@@ -295,6 +295,7 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
 endif
+	${EMERGE} -uN -q -j dev-python/setuptools
 	touch $@
 python: install/python
 
@@ -413,7 +414,7 @@ install/Theano: install/portage-dirs install/numpy
 	touch $@
 Theano: install/Theano
 
-install/pytables: install/portage-dirs
+install/pytables: install/portage-dirs install/hdf5
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-python/pytables
 	touch $@
@@ -508,6 +509,7 @@ shogun: portage-dirs layman overlay-sekyfsr
 
 install/boost: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.mask/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -q -j dev-libs/boost dev-util/boost-build
 	touch $@
 boost: install/boost
@@ -691,8 +693,8 @@ opencl: install/opencl
 install/cuda: install/portage-dirs install/layman install/nvidia-drivers install/nvidia-settings install/overlay-sekyfsr
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
-	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2'
-	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2'
+	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-toolkit-4.2.9'
+	${EMERGE} -uN -q -j '=dev-util/nvidia-cuda-sdk-4.2.9'
 	${EMERGE} -uN -q -j dev-util/nvidia-cuda-tdk
 	make module-rebuild
 	touch $@
