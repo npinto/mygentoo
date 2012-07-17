@@ -295,6 +295,7 @@ ifneq ($(shell eselect python list | grep python | wc -l), 1)
 		#&& revdep-rebuild -v -- --ask -q -j \
 		#)
 endif
+	${EMERGE} -uN -q -j dev-python/setuptools
 	touch $@
 python: install/python
 
