@@ -1,3 +1,4 @@
 net-misc/dropbox **
 gnome-extra/nautilus-dropbox **
 net-misc/dropbox-cli **
+dev-util/patchelf **
