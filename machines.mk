@@ -24,7 +24,7 @@ _dev:
 	#make cgkit
 	make cuda
 	make cython
-	make dropbox
+	#make dropbox
 	make eix
 	make evince
 	make fabric
@@ -95,6 +95,7 @@ _thor-dev-: _dev _desktop
 _munctional: _dev
 _kraken: _dev
 _squid: _dev
+_ip----: _dev
 
 _honeybadger:
 	make portage-sqlite
