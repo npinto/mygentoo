@@ -95,7 +95,7 @@ _thor-dev-: _dev _desktop
 _munctional: _dev
 _kraken: _dev
 _squid: _dev
-_ip----: _dev
+_ip----: _ec2
 
 _honeybadger:
 	make portage-sqlite
@@ -232,6 +232,69 @@ _prefix:
 	#make xdg
 	#make xdg-config
 	#make opencv
+	# --
+	make zsh
+	make ncdu
+	make htop
+	make tmux
+
+_ec2:
+	make portage-sqlite
+	make atlas
+	make autopep8
+	make cairo
+	make cuda
+	make cython
+	make eix
+	make fabric
+	make feh
+	make freeimage
+	make gcc
+	make gthumb
+	make icc
+	make jpeg
+	make imagemagick
+	make ipdb
+	make ipython
+	make joblib
+	make layman
+	make locale
+	make matplotlib
+	#make mkl
+	make module-rebuild
+	make mongodb
+	make mplayer
+	make nautilus
+	make numexpr
+	make numpy
+	make nvidia-drivers
+	make nvidia-settings
+	make opencl
+	make parallel
+	make pep8
+	make pip
+	make pycuda
+	make pymongo
+	make pyopencl
+	make pyqt4
+	make pytables
+	make python
+	make scikits.image
+	make scikits.learn
+	make scipy
+	make setuptools
+	make shogun
+	make simplejson
+	make sun-jdk
+	make tbb
+	make terminator
+	#make texlive
+	make Theano
+	make valgrind
+	make vim
+	make virtualenv
+	make virtualenvwrapper
+	make wgetpaste
 	# --
 	make zsh
 	make ncdu
