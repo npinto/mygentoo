@@ -95,6 +95,7 @@ _thor-dev-: _dev _desktop
 _munctional: _dev
 _kraken: _dev
 _squid: _dev
+_ip: _dev
 
 _honeybadger:
 	make portage-sqlite
