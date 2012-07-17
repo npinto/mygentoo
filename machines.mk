@@ -3,7 +3,7 @@ include init.mk
 
 me:
 ifeq ($(strip ${EPREFIX}), )
-	make _$(shell hostname)
+	make _$(shell hostname | sed "s;[0-9]*;;g")
 else
 	make _prefix
 endif
@@ -91,7 +91,10 @@ _dev:
 
 _primo: _dev _desktop
 _logilo: _dev _desktop
-_thor-dev-1: _dev _desktop
+_thor-dev-: _dev _desktop
+_munctional: _dev
+_kraken: _dev
+_squid: _dev
 
 _honeybadger:
 	make portage-sqlite
