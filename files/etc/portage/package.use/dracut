@@ -1,1 +1,8 @@
 sys-kernel/dracut device-mapper dracut_modules_crypt dracut_modules_crypt-gpg dracut_modules_syslog net selinux
+dev-libs/libgcrypt static-libs
+sys-libs/libselinux python
+dev-libs/libgpg-error static-libs
+app-admin/setools python
+sys-apps/util-linux static-libs
+sys-libs/libsemanage python
+dev-libs/popt static-libs
