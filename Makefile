@@ -745,3 +745,11 @@ install/vagrant: install/portage-dirs install/virtualbox
 	${EMERGE} -uN -q -j app-emulation/vagrant
 	touch $@
 vagrant: install/vagrant
+
+install/dracut: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
+	${EMERGE} -uN -q -j sec-policy/selinux-dracut sys-kernel/dracut
+	touch $@
+dracut: install/dracut
