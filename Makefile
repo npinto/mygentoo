@@ -187,6 +187,12 @@ install/wgetpaste:
 	touch $@
 wgetpaste: install/wgetpaste
 
+install/gisty:
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j app-text/gisty
+	touch $@
+gisty: install/gisty
+
 # -- Editors
 install/vim: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
