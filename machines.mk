@@ -264,7 +264,7 @@ _ec2:
 	make module-rebuild
 	make mongodb
 	make mplayer
-	make nautilus
+	#make nautilus
 	make numexpr
 	make numpy
 	make nvidia-drivers
