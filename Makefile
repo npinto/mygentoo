@@ -759,3 +759,11 @@ install/dracut: install/portage-dirs
 	${EMERGE} -uN -q -j sec-policy/selinux-dracut sys-kernel/dracut
 	touch $@
 dracut: install/dracut
+
+# -- Queuing systems
+install/torque: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j sys-cluster/torque
+	touch $@
+torque: install/torque
