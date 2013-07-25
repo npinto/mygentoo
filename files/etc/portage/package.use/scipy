@@ -1,1 +1,1 @@
-sci-libs/scipy doc umfpack test
+sci-libs/scipy doc umfpack test -python_targets_python3_2
