@@ -70,7 +70,7 @@ _dev:
 	make setuptools
 	make shogun
 	make simplejson
-	make sun-jdk
+	make oracle-jdk-bin
 	make tbb
 	make terminator
 	make texlive
@@ -222,7 +222,7 @@ _prefix:
 	make wgetpaste
 	# --
 	#make megacli
-	#make sun-jdk
+	#make oracle-jdk-bin
 	#make tbb
 	#make terminator
 	#make texlive
@@ -285,7 +285,7 @@ _ec2:
 	make setuptools
 	make shogun
 	make simplejson
-	make sun-jdk
+	make oracle-jdk-bin
 	make tbb
 	make terminator
 	#make texlive

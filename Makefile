@@ -14,14 +14,15 @@ _list:
 
 clean:
 	rm -vrf install/*
-
 update: install/portage install/eix
 ifeq (${NO_EIX_SYNC},)
 	eix-sync -q
 endif
 ifeq ($(strip ${EPREFIX}), )
+ifeq (${NO_SECURITY},)
 	glsa-check -q -t all
 	glsa-check -q -f all
+endif
 ifeq (${NO_ASK},)
 	${EMERGE} --ask -qtuDN -q -j --with-bdeps y --keep-going world system
 	${EMERGE} --ask --depclean -q # -tv
@@ -586,6 +587,16 @@ install/mplayer: install/portage-dirs
 	touch $@
 mplayer: install/mplayer
 
+
+# -- 3D
+install/blender: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j media-gfx/blender
+	touch $@
+blender: install/blender
+
+
 # -- Misc
 install/zsh:
 	${EMERGE} -uN -j app-shells/zsh
@@ -603,6 +614,7 @@ install/htop:
 htop: install/htop
 
 install/tmux:
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	${EMERGE} -uN -j app-misc/tmux
 	touch $@
 tmux: install/tmux
@@ -697,6 +709,13 @@ install/nvidia-settings: install/portage-dirs
 	touch $@
 nvidia-settings: install/nvidia-settings
 
+install/mesa: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	${EMERGE} -uN -q -j media-libs/mesa
+	touch $@
+mesa: install/mesa
+
 # -- OpenCL
 install/opencl: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
@@ -719,20 +738,25 @@ cuda: install/cuda
 
 # -- Java
 me_nodistfiles=$(subst ${EPREFIX}/usr/portage/distfiles/,,$@)
-${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin:
-	wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+#${EPREFIX}/usr/portage/distfiles/jdk-6u37-linux-x64.bin:
+${EPREFIX}/usr/portage/distfiles/jdk-7u10-linux-x64.tar.gz:
+	#wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+	# see http://www.reucon.com/cdn/java/download.sh
+	wget -c --header="Cookie: gpw_e24=x" http://download.oracle.com/otn-pub/java/jdk/7u10-b18/jdk-7u10-linux-x64.tar.gz
+	#wget http://www.reucon.com/cdn/java/jdk-6u37-linux-x64.bin
 	mv -vf ${me_nodistfiles} $@
 
-${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz:
-	wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
-	mv -vf ${me_nodistfiles} $@
+#${EPREFIX}/usr/portage/distfiles/jdk-6u37-linux-x64-demos.tar.gz:
+	#wget http://dl.dropbox.com/u/167753/fuck-oracle/${me_nodistfiles}
+	#mv -vf ${me_nodistfiles} $@
 
-install/sun-jdk: ${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64.bin \
-	${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz
+install/oracle-jdk-bin: ${EPREFIX}/usr/portage/distfiles/jdk-7u10-linux-x64.tar.gz
+	#${EPREFIX}/usr/portage/distfiles/jdk-6u33-linux-x64-demos.tar.gz
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/${me}
-	${EMERGE} -uN -q -j dev-java/sun-jdk
+	${EMERGE} -uN -q -j dev-java/oracle-jdk-bin
 	touch $@
-sun-jdk: install/sun-jdk
+oracle-jdk-bin: install/oracle-jdk-bin
 
 # -- VMs
 install/virtualbox: install/portage-dirs
@@ -759,6 +783,15 @@ install/dracut: install/portage-dirs
 	${EMERGE} -uN -q -j sec-policy/selinux-dracut sys-kernel/dracut
 	touch $@
 dracut: install/dracut
+
+install/wine: install/portage-dirs
+	#cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	#cp -f {files,${EPREFIX}}/etc/portage/package.unmask/${me}
+	${EMERGE} -uN -q -j app-emulation/wine
+	touch $@
+wine: install/wine
+
 
 # -- Queuing systems
 install/torque: install/portage-dirs
