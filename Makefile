@@ -269,9 +269,11 @@ terminator: portage-dirs
 	${EMERGE} -uN -q -j x11-terms/terminator
 	make fonts
 
-chromium: portage-dirs
-	cp -f {files,${EPREFIX}}/etc/portage/package.use/$@
+install/chromium: portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
 	${EMERGE} -uN -q -j www-client/chromium
+chromium: install/chromium
 
 adobe-flash: portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.license/$@
@@ -305,6 +307,13 @@ endif
 	${EMERGE} -uN -q -j dev-python/setuptools
 	touch $@
 python: install/python
+
+install/pypy: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j dev-python/pypy
+	touch $@
+pypy: install/pypy
 
 install/pip: install/portage-dirs
 	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
@@ -596,6 +605,19 @@ install/blender: install/portage-dirs
 	touch $@
 blender: install/blender
 
+install/assimp: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j media-gfx/assimp
+	touch $@
+assimp: install/assimp
+
+install/libsdl: install/portage-dirs
+	cp -f {files,${EPREFIX}}/etc/portage/package.use/${me}
+	cp -f {files,${EPREFIX}}/etc/portage/package.keywords/${me}
+	${EMERGE} -uN -q -j media-libs/libsdl
+	touch $@
+libsdl: install/libsdl
 
 # -- Misc
 install/zsh:
